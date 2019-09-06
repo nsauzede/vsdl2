@@ -7,6 +7,7 @@ Current APIs available/tested in examples :
 - input handling (keyboard/joystick events)
 - sounds (WAV mixing)
 - music (MOD mixing)
+- more to come.. (networking ?)
 
 # Dependencies
 Ubuntu :
