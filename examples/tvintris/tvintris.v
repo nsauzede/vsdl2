@@ -302,28 +302,32 @@ fn main() {
 	mut g := Game{}
         mut should_close := false
 	for {
-		game.draw_begin()
+		g1 := game
+		g2 := game2
+		// here we determine which game contains most recent state
+		if g1.tetro_total > g.tetro_total {
+			g = *g1
+		}
+		if g2.tetro_total > g.tetro_total {
+			g = *g2
+		}
+		g.draw_begin()
 
-	game.draw_tetro()
-	game.draw_field()
-	game2.draw_tetro()
-	game2.draw_field()
+		g1.draw_tetro()
+		g1.draw_field()
 
-		game.draw_middle()
+		g2.draw_tetro()
+		g2.draw_field()
 
-	game.draw_score()
-	game2.draw_score()
-	g1 := game
-	g2 := game2
-	if g1.tetro_total > g.tetro_total {
-		g = *g1
-	}
-	if g2.tetro_total > g.tetro_total {
-		g = *g2
-	}
-	g.draw_stats()
+		g.draw_middle()
 
-		game.draw_end()
+		g1.draw_score()
+		g2.draw_score()
+
+		g.draw_stats()
+
+		g.draw_end()
+
 //		game.handle_events()            // CRASHES if done in function ???
 		ev := SdlEvent{}
 		for !!C.SDL_PollEvent(&ev) {
@@ -721,6 +725,17 @@ fn (g &Game) draw_stats() {
 			}
 			stats += ' '
 			stats += s.str()
+
+//	h := s * 20 / 100
+	h := 40
+//	rect := SdlRect {WinWidth / 3 + 10 + idx * 4, WinHeight * 3 / 4 - h, 4, h}
+	rect := SdlRect {10, 10, h, h}
+//	scol := Colors[idx]
+//	col := C.SDL_MapRGB(g.sdl.screen.format, scol.r, scol.g, scol.b)
+	col := C.SDL_MapRGB(g.sdl.screen.format, 255, 0, 0)
+	C.SDL_FillRect(g.sdl.screen, &rect, col)
+//	idx++
+
 		}
 		g.draw_text(WinWidth / 3 - 8, WinHeight * 3 / 4 + 2 * TextSize, stats, 0, 0, 0)
 	}
@@ -736,6 +751,23 @@ fn (g &Game) draw_begin() {
 	C.SDL_FillRect(g.sdl.screen, &rect, col)
 	rect = SdlRect {WinWidth - BlockSize * FieldWidth - 4,0,2,g.sdl.h}
 	C.SDL_FillRect(g.sdl.screen, &rect, col)
+
+	mut idx := 0
+	for st in g.tetro_stats {
+		mut s := 10
+		if g.tetro_total > 0 {
+			s += 90 * st / g.tetro_total
+		}
+		w := BlockSize
+		h := s * 4 * w / 100
+		rect = SdlRect {(WinWidth - 7 * (w + 1)) / 2 + idx * (w + 1), WinHeight * 3 / 4 - h, w, h}
+//		rect = SdlRect {10 + 5 * idx, 100 - h, 4, h}
+		scol := Colors[idx + 1]
+		col = C.SDL_MapRGB(g.sdl.screen.format, scol.r, scol.g, scol.b)
+//		col = C.SDL_MapRGB(g.sdl.screen.format, 255, 0, 0)
+		C.SDL_FillRect(g.sdl.screen, &rect, col)
+		idx++
+	}
 }
 
 fn (g &Game) draw_scene() {
