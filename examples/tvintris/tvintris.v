@@ -397,8 +397,10 @@ fn (game mut Game) handle_key(key int) {
 	if action == .space {
 			switch game.state {
 				case .running:
+					C.Mix_PauseMusic()
 					game.state = .paused
 				case .paused:
+					C.Mix_ResumeMusic()
 					game.state = .running
 			}
 	}
