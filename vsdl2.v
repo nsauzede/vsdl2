@@ -11,6 +11,7 @@ module vsdl2
 #include <SDL_mixer.h>
 
 fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) &SdlSurface
+fn C.SDL_PollEvent(&SdlEvent) int
 
 struct C.SDL_Color{
 pub:
@@ -36,10 +37,10 @@ struct SdlQuitEvent {
 }
 struct SdlKeysym {
 pub:
-        scancode	int
-        sym		int
-        mod		u16
-        unused		u32
+        scancode int
+        sym int
+        mod u16
+        unused u32
 }
 struct SdlKeyboardEvent {
 pub:
@@ -108,3 +109,8 @@ mut:
         userdata voidptr
 }
 type SdlAudioSpec C.SDL_AudioSpec
+
+pub fn fill_rect(screen &SdlSurface, rect &SdlRect, _col &SdlColor) {
+	col := C.SDL_MapRGB(screen.format, _col.r, _col.g, _col.b)
+	C.SDL_FillRect(screen, rect, col)
+}
