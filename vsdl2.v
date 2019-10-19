@@ -9,6 +9,8 @@ module vsdl2
 //#flag windows `sdl2-config --libs`  -lSDL2_ttf -lSDL2_mixer
 //#flag `sdl2-config --cflags --libs`  -lSDL2_ttf -lSDL2_mixer
 
+#flag -DSDL_DISABLE_IMMINTRIN_H
+
 // following kludge until `sdl2-config ...` is supported also on windows
 #flag windows -I/msys64/mingw64/include/SDL2
 #flag windows -Dmain=SDL_main
