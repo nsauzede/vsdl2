@@ -9,10 +9,8 @@ module main
 
 import rand
 import time
-import os
 import math
 import nsauzede.vsdl2
-[inline] fn sdl_fill_rect(s &SdlSurface,r &SdlRect,c &SdlColor){vsdl2.fill_rect(s,r,c)}
 
 const (
 	Title = 'tVintris'
@@ -114,15 +112,6 @@ const (
 		SdlColor{byte(0xd1), byte(0), byte(0), byte(0)},	// longest : lightred d10000
 		SdlColor{byte(0), byte(170), byte(170), byte(0)},	// unused ?
 	]
-	// Background color
-	BackgroundColor = SdlColor{byte(0), byte(0), byte(0), byte(0)}
-//	BackgroundColor = SdlColor{byte(255), byte(255), byte(255), byte(0)}
-	// Foreground color
-	ForegroundColor = SdlColor{byte(0), byte(170), byte(170), byte(0)}
-//	ForegroundColor = SdlColor{byte(0), byte(0), byte(0), byte(0)}
-	// Text color
-	TextColor = SdlColor{byte(0xca), byte(0x7d), byte(0x5f), byte(0)}
-//	TextColor = SdlColor{byte(0), byte(0), byte(0), byte(0)}
 )
 
 // TODO: type Tetro [TetroSize]struct{ x, y int }
@@ -228,7 +217,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	C.SDL_SetWindowTitle(sdl.window, title.str)
 	sdl.w = w
 	sdl.h = h
-	sdl.screen = C.SDL_CreateRGBSurface(0, w, h, bpp, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000)
+	sdl.screen = &SdlSurface(SDL_CreateRGBSurface(0, w, h, bpp, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000))
 	sdl.texture = C.SDL_CreateTexture(sdl.renderer, C.SDL_PIXELFORMAT_ARGB8888, C.SDL_TEXTUREACCESS_STREAMING, w, h)
 
 	C.Mix_Init(0)
@@ -261,6 +250,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 
 fn main() {
 	println('tVintris -- tribute to venerable Twintris')
+	println('vsdl2 version: $vsdl2.version')
 	mut game := &Game{}
 	game.sdl.jnames[0] = JOYP1NAME
 	game.sdl.jnames[1] = JOYP2NAME
@@ -595,7 +585,7 @@ fn (g mut Game) move_right(dx int) bool {
 	return true
 }
 
-fn (g &Game) delete_completed_lines() int {
+fn (g mut Game) delete_completed_lines() int {
 	mut n := 0
 	for y := FieldHeight; y >= 1; y-- {
 		n += g.delete_completed_line(y)
@@ -669,8 +659,12 @@ fn (g &Game) draw_tetro() {
 fn (g &Game) draw_block(i, j, color_idx int) {
 	rect := SdlRect {g.ofs_x + (j - 1) * BlockSize, (i - 1) * BlockSize,
 		BlockSize - 1, BlockSize - 1}
-	col := Colors[color_idx]
-	sdl_fill_rect(g.sdl.screen, &rect, &col)
+	scol := Colors[color_idx]
+	rr := scol.r
+	gg := scol.g
+	bb := scol.b
+	col := C.SDL_MapRGB(g.sdl.screen.format, rr, gg, bb)
+	C.SDL_FillRect(g.sdl.screen, &rect, col)
 }
 
 fn (g &Game) draw_field() {
@@ -684,7 +678,8 @@ fn (g &Game) draw_field() {
 	}
 }
 
-fn (g &Game) draw_text(x int, y int, text string, tcol SdlColor) {
+fn (g &Game) draw_text(x int, y int, text string, rr int, gg int, bb int) {
+	tcol := SdlColor {byte(3), byte(2), byte(1), byte(0)}
 	tsurf := C.TTF_RenderText_Solid(g.font, text.str, tcol)
 	ttext := C.SDL_CreateTextureFromSurface(g.sdl.renderer, tsurf)
 	texw := 0
@@ -696,23 +691,60 @@ fn (g &Game) draw_text(x int, y int, text string, tcol SdlColor) {
 	C.SDL_FreeSurface(tsurf)
 }
 
-[inline] fn (g &Game) draw_ptext(x int, y int, text string, tcol SdlColor) {
-	g.draw_text(g.ofs_x + x, y, text, tcol)
+fn (g &Game) draw_ptext(x int, y int, text string, rr int, gg int, bb int) {
+	g.draw_text(g.ofs_x + x, y, text, rr, gg, bb)
 }
 
-[live]
-fn (g &Game) draw_begin() {
-//	println('about to clear')
-	C.SDL_RenderClear(g.sdl.renderer)
-	mut rect := SdlRect {0,0,g.sdl.w,g.sdl.h}
-	col := SdlColor{byte(0), byte(0), byte(0), byte(0)}
-//	sdl_fill_rect(g.sdl.screen, &rect, BackgroundColor)
-	sdl_fill_rect(g.sdl.screen, &rect, col)
+fn (g &Game) draw_score() {
+	if g.font != voidptr(0) {
+		g.draw_ptext(1, 2, 'score: ' + g.score.str() + ' nxt=' + g.tetro_next.str(), 0, 0, 0)
+		if g.state == .gameover {
+			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Over', 0, 0, 0)
+			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'FIRE to restart', 0, 0, 0)
+		} else if g.state == .paused {
+			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Paused', 0, 0, 0)
+			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'SPACE to resume', 0, 0, 0)
+		}
+	}
+}
 
+fn (g &Game) draw_stats() {
+	if g.font != voidptr(0) {
+		g.draw_text(WinWidth / 3 + 10, WinHeight * 3 / 4 + 0 * TextSize, 'stats: ' + g.tetro_total.str() + ' tetros', 0, 0, 0)
+		mut stats := ''
+		for st in g.tetro_stats {
+			mut s := 0
+			if g.tetro_total > 0 {
+				s = 100 * st / g.tetro_total
+			}
+			stats += ' '
+			stats += s.str()
+
+//	h := s * 20 / 100
+	h := 40
+//	rect := SdlRect {WinWidth / 3 + 10 + idx * 4, WinHeight * 3 / 4 - h, 4, h}
+	rect := SdlRect {10, 10, h, h}
+//	scol := Colors[idx]
+//	col := C.SDL_MapRGB(g.sdl.screen.format, scol.r, scol.g, scol.b)
+	col := C.SDL_MapRGB(g.sdl.screen.format, 255, 0, 0)
+	C.SDL_FillRect(g.sdl.screen, &rect, col)
+//	idx++
+
+		}
+		g.draw_text(WinWidth / 3 - 8, WinHeight * 3 / 4 + 2 * TextSize, stats, 0, 0, 0)
+	}
+}
+
+fn (g &Game) draw_begin() {
+	mut rect := SdlRect {0,0,g.sdl.w,g.sdl.h}
+	mut col := C.SDL_MapRGB(g.sdl.screen.format, 255, 255, 255)
+	C.SDL_FillRect(g.sdl.screen, &rect, col)
+
+	col = C.SDL_MapRGB(g.sdl.screen.format, 0, 0, 0)
 	rect = SdlRect {BlockSize * FieldWidth + 2,0,2,g.sdl.h}
-	sdl_fill_rect(g.sdl.screen, &rect, ForegroundColor)
+	C.SDL_FillRect(g.sdl.screen, &rect, col)
 	rect = SdlRect {WinWidth - BlockSize * FieldWidth - 4,0,2,g.sdl.h}
-	sdl_fill_rect(g.sdl.screen, &rect, ForegroundColor)
+	C.SDL_FillRect(g.sdl.screen, &rect, col)
 
 	mut idx := 0
 	for st in g.tetro_stats {
@@ -723,43 +755,24 @@ fn (g &Game) draw_begin() {
 		w := BlockSize
 		h := s * 4 * w / 100
 		rect = SdlRect {(WinWidth - 7 * (w + 1)) / 2 + idx * (w + 1), WinHeight * 3 / 4 - h, w, h}
-		sdl_fill_rect(g.sdl.screen, &rect, Colors[idx + 1])
+//		rect = SdlRect {10 + 5 * idx, 100 - h, 4, h}
+		scol := Colors[idx + 1]
+		col = C.SDL_MapRGB(g.sdl.screen.format, scol.r, scol.g, scol.b)
+//		col = C.SDL_MapRGB(g.sdl.screen.format, 255, 0, 0)
+		C.SDL_FillRect(g.sdl.screen, &rect, col)
 		idx++
 	}
 }
 
+fn (g &Game) draw_scene() {
+	g.draw_tetro()
+	g.draw_field()
+}
+
 fn (g &Game) draw_middle() {
 	C.SDL_UpdateTexture(g.sdl.texture, 0, g.sdl.screen.pixels, g.sdl.screen.pitch)
+	C.SDL_RenderClear(g.sdl.renderer)
 	C.SDL_RenderCopy(g.sdl.renderer, g.sdl.texture, 0, 0)
-}
-
-fn (g &Game) draw_score() {
-	if g.font != voidptr(0) {
-		g.draw_ptext(1, 2, 'score: ' + g.score.str() + ' nxt=' + g.tetro_next.str(), TextColor)
-		if g.state == .gameover {
-			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Over', TextColor)
-			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'FIRE to restart', TextColor)
-		} else if g.state == .paused {
-			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Paused', TextColor)
-			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'SPACE to resume', TextColor)
-		}
-	}
-}
-
-fn (g &Game) draw_stats() {
-	if g.font != voidptr(0) {
-		g.draw_text(WinWidth / 3 + 10, WinHeight * 3 / 4 + 0 * TextSize, 'stats: ' + g.tetro_total.str() + ' tetros', TextColor)
-		mut stats := ''
-		for st in g.tetro_stats {
-			mut s := 0
-			if g.tetro_total > 0 {
-				s = 100 * st / g.tetro_total
-			}
-			stats += ' '
-			stats += s.str()
-		}
-		g.draw_text(WinWidth / 3 - 8, WinHeight * 3 / 4 + 2 * TextSize, stats, TextColor)
-	}
 }
 
 fn (g &Game) draw_end() {
