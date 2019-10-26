@@ -21,25 +21,36 @@ module vsdl2
 #include <SDL_mixer.h>
 
 
-struct C.SDL_Color{
+//struct C.SDL_Color{
+pub struct SdlColor{
 pub:
         r byte
         g byte
         b byte
         a byte
 }
-type SdlColor C.SDL_Color
+//type SdlColor C.SDL_Color
 
-struct C.SDL_Rect {
+pub struct C.SDL_Color{
+pub:
+        r byte
+        g byte
+        b byte
+        a byte
+}
+
+//struct C.SDL_Rect {
+pub struct SdlRect {
 pub:
         x int
         y int
         w int
         h int
 }
-type SdlRect C.SDL_Rect
+//type SdlRect C.SDL_Rect
 
-struct C.SDL_Surface {
+//pub struct C.SDL_Surface {
+pub struct SdlSurface {
 pub:
         flags u32
         format voidptr
@@ -54,7 +65,8 @@ pub:
         map voidptr
         refcount int
 }
-type SdlSurface C.SDL_Surface
+//type SdlSurface C.SDL_Surface
+//type SdlSurface SdlSurface
 
 /////////////////////////////////////////////////////////
 
@@ -109,7 +121,8 @@ pub:
 type SdlEvent SdlEventU
 
 
-struct C.SDL_AudioSpec {
+//struct C.SDL_AudioSpec {
+pub struct SdlAudioSpec {
 pub:
 mut:
         freq int
@@ -121,7 +134,7 @@ mut:
         callback voidptr
         userdata voidptr
 }
-type SdlAudioSpec C.SDL_AudioSpec
+//type SdlAudioSpec C.SDL_AudioSpec
 
 //////////////////////////////////////////////////////////
 
