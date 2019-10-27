@@ -109,7 +109,8 @@ pub:
         value byte
 }
 
-union SdlEventU {
+//pub union SdlEventU {
+pub union SdlEvent {
 pub:
         _type u32
         quit SdlQuitEvent
@@ -118,7 +119,7 @@ pub:
         jhat SdlJoyHatEvent
         _pad56 [56]byte
 }
-type SdlEvent SdlEventU
+//type SdlEvent SdlEventU
 
 
 //struct C.SDL_AudioSpec {
@@ -149,7 +150,7 @@ pub fn fill_rect(screen &SdlSurface, rect &SdlRect, _col &SdlColor) {
 	C.SDL_FillRect(screen, rect, col)
 }
 
-const (
+pub const (
   version = '0.2' // hack to avoid unused module warning in the main program
 )
 
