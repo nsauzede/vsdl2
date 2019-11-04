@@ -9,8 +9,10 @@ module main
 
 import rand
 import time
+import os
 import math
 import nsauzede.vsdl2
+[inline] fn sdl_fill_rect(s &vsdl2.SdlSurface,r &vsdl2.SdlRect,c &vsdl2.SdlColor){vsdl2.fill_rect(s,r,c)}
 
 const (
 	Title = 'tVintris'
@@ -102,16 +104,25 @@ const (
 	]
 	// Each tetro has its unique color
 	Colors = [
-		SdlColor{byte(0), byte(0), byte(0), byte(0)},		// unused ?
-		SdlColor{byte(0), byte(0x62), byte(0xc0), byte(0)},	// quad : darkblue 0062c0
-		SdlColor{byte(0xca), byte(0x7d), byte(0x5f), byte(0)},	// tricorn : lightbrown ca7d5f
-		SdlColor{byte(0), byte(0xc1), byte(0xbf), byte(0)},	// short topright : lightblue 00c1bf
-		SdlColor{byte(0), byte(0xc1), byte(0), byte(0)},	// short topleft : lightgreen 00c100
-		SdlColor{byte(0xbf), byte(0xbe), byte(0), byte(0)},	// long topleft : yellowish bfbe00
-		SdlColor{byte(0xd1), byte(0), byte(0xbf), byte(0)},	// long topright : pink d100bf
-		SdlColor{byte(0xd1), byte(0), byte(0), byte(0)},	// longest : lightred d10000
-		SdlColor{byte(0), byte(170), byte(170), byte(0)},	// unused ?
+		vsdl2.SdlColor{byte(0), byte(0), byte(0), byte(0)},		// unused ?
+		vsdl2.SdlColor{byte(0), byte(0x62), byte(0xc0), byte(0)},	// quad : darkblue 0062c0
+		vsdl2.SdlColor{byte(0xca), byte(0x7d), byte(0x5f), byte(0)},	// tricorn : lightbrown ca7d5f
+		vsdl2.SdlColor{byte(0), byte(0xc1), byte(0xbf), byte(0)},	// short topright : lightblue 00c1bf
+		vsdl2.SdlColor{byte(0), byte(0xc1), byte(0), byte(0)},	// short topleft : lightgreen 00c100
+		vsdl2.SdlColor{byte(0xbf), byte(0xbe), byte(0), byte(0)},	// long topleft : yellowish bfbe00
+		vsdl2.SdlColor{byte(0xd1), byte(0), byte(0xbf), byte(0)},	// long topright : pink d100bf
+		vsdl2.SdlColor{byte(0xd1), byte(0), byte(0), byte(0)},	// longest : lightred d10000
+		vsdl2.SdlColor{byte(0), byte(170), byte(170), byte(0)},	// unused ?
 	]
+	// Background color
+	BackgroundColor = vsdl2.SdlColor{byte(0), byte(0), byte(0), byte(0)}
+//	BackgroundColor = vsdl2.SdlColor{byte(255), byte(255), byte(255), byte(0)}
+	// Foreground color
+	ForegroundColor = vsdl2.SdlColor{byte(0), byte(170), byte(170), byte(0)}
+//	ForegroundColor = vsdl2.SdlColor{byte(0), byte(0), byte(0), byte(0)}
+	// Text color
+	TextColor = vsdl2.SdlColor{byte(0xca), byte(0x7d), byte(0x5f), byte(0)}
+//	TextColor = vsdl2.SdlColor{byte(0), byte(0), byte(0), byte(0)}
 )
 
 // TODO: type Tetro [TetroSize]struct{ x, y int }
@@ -140,7 +151,7 @@ mut:
 	h		int
 	window          voidptr
 	renderer        voidptr
-	screen          &SdlSurface
+	screen          &vsdl2.SdlSurface
 	texture         voidptr
 //      AUDIO
         actx		AudioContext
@@ -217,7 +228,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	C.SDL_SetWindowTitle(sdl.window, title.str)
 	sdl.w = w
 	sdl.h = h
-	sdl.screen = &SdlSurface(SDL_CreateRGBSurface(0, w, h, bpp, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000))
+	sdl.screen = C.SDL_CreateRGBSurface(0, w, h, bpp, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000)
 	sdl.texture = C.SDL_CreateTexture(sdl.renderer, C.SDL_PIXELFORMAT_ARGB8888, C.SDL_TEXTUREACCESS_STREAMING, w, h)
 
 	C.Mix_Init(0)
@@ -250,7 +261,6 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 
 fn main() {
 	println('tVintris -- tribute to venerable Twintris')
-	println('vsdl2 version: $vsdl2.version')
 	mut game := &Game{}
 	game.sdl.jnames[0] = JOYP1NAME
 	game.sdl.jnames[1] = JOYP2NAME
@@ -330,13 +340,11 @@ fn main() {
 		g.draw_end()
 
 //		game.handle_events()            // CRASHES if done in function ???
-		ev := SdlEvent{}
+		ev := vsdl2.SdlEvent{}
 		for 0 < C.SDL_PollEvent(&ev) {
-			switch ev._type {
-				case C.SDL_QUIT:
-					should_close = true
-					break
-				case C.SDL_KEYDOWN:
+			match int(ev._type) {
+				C.SDL_QUIT { should_close = true }
+				C.SDL_KEYDOWN {
 					key := int(ev.key.keysym.sym)
 					if key == C.SDLK_ESCAPE {
 					        should_close = true
@@ -344,19 +352,22 @@ fn main() {
 					}
 					game.handle_key(key)
 					game2.handle_key(key)
-				case C.SDL_JOYBUTTONDOWN:
+				}
+				C.SDL_JOYBUTTONDOWN {
 					jb := int(ev.jbutton.button)
 					joyid := int(ev.jbutton.which)
 //					println('JOY BUTTON $jb $joyid')
 					game.handle_jbutton(jb, joyid)
 					game2.handle_jbutton(jb, joyid)
-				case C.SDL_JOYHATMOTION:
+				}
+				C.SDL_JOYHATMOTION {
 					jh := int(ev.jhat.hat)
 					jv := int(ev.jhat.value)
 					joyid := int(ev.jhat.which)
 //					println('JOY HAT $jh $jv $joyid')
 					game.handle_jhat(jh, jv, joyid)
 					game2.handle_jhat(jh, jv, joyid)
+				}
 			}
 		}
 		if should_close {
@@ -388,42 +399,39 @@ enum Action {
 fn (game mut Game) handle_key(key int) {
 	// global keys
 	mut action := Action(.idle)
-	switch key {
-		case C.SDLK_SPACE:
-			action = .space
-		case game.k_fire:
-			action = .fire
+	match key {
+		C.SDLK_SPACE { action = .space }
+		game.k_fire { action = .fire }
 	}
 
 	if action == .space {
-			switch game.state {
-				case .running:
+			match game.state {
+				.running {
 					C.Mix_PauseMusic()
 					game.state = .paused
-				case .paused:
+				}
+				.paused {
 					C.Mix_ResumeMusic()
 					game.state = .running
+				}
 			}
 	}
 
 	if action == .fire {
-			switch game.state {
-				case .gameover:
+			match game.state {
+				.gameover {
 					game.init_game()
 					game.state = .running
+				}
 			}
 	}
 	if game.state != .running { return }
 	// keys while game is running
-	switch key {
-		case game.k_up:
-			game.rotate_tetro()
-		case game.k_left:
-			game.move_right(-1)
-		case game.k_right:
-			game.move_right(1)
-		case game.k_down:
-			game.move_tetro() // drop faster when the player presses <down>
+	match key {
+		game.k_up { game.rotate_tetro() }
+		game.k_left { game.move_right(-1) }
+		game.k_right { game.move_right(1) }
+		game.k_down { game.move_tetro() } // drop faster when the player presses <down>
 	}
 }
 
@@ -433,16 +441,16 @@ fn (game mut Game) handle_jbutton(jb int, joyid int) {
 	}
 	// global buttons
 	mut action := Action(.idle)
-	switch jb {
-		case game.jb_fire:
-			action = .fire
+	match jb {
+		game.jb_fire { action = .fire }
 	}
 
 	if action == .fire {
-			switch game.state {
-				case .gameover:
+			match game.state {
+				.gameover {
 					game.init_game()
 					game.state = .running
+				}
 			}
 	}
 }
@@ -454,19 +462,11 @@ fn (game mut Game) handle_jhat(jh int, jv int, joyid int) {
 	if game.state != .running { return }
 //	println('testing hat values.. joyid=$joyid jh=$jh jv=$jv')
 	// hat values while game is running
-	switch jv {
-		case game.jh_up:
-//			println('UP')
-			game.rotate_tetro()
-		case game.jh_left:
-//			println('LEFT')
-			game.move_right(-1)
-		case game.jh_right:
-//			println('RIGHT')
-			game.move_right(1)
-		case game.jh_down:
-//			println('DOWN')
-			game.move_tetro() // drop faster when the player presses <down>
+	match jv {
+		game.jh_up { game.rotate_tetro() }
+		game.jh_left { game.move_right(-1) }
+		game.jh_right { game.move_right(1) }
+		game.jh_down { game.move_tetro() } // drop faster when the player presses <down>
 	}
 }
 
@@ -585,7 +585,7 @@ fn (g mut Game) move_right(dx int) bool {
 	return true
 }
 
-fn (g mut Game) delete_completed_lines() int {
+fn (g &Game) delete_completed_lines() int {
 	mut n := 0
 	for y := FieldHeight; y >= 1; y-- {
 		n += g.delete_completed_line(y)
@@ -657,14 +657,10 @@ fn (g &Game) draw_tetro() {
 }
 
 fn (g &Game) draw_block(i, j, color_idx int) {
-	rect := SdlRect {g.ofs_x + (j - 1) * BlockSize, (i - 1) * BlockSize,
+	rect := vsdl2.SdlRect {g.ofs_x + (j - 1) * BlockSize, (i - 1) * BlockSize,
 		BlockSize - 1, BlockSize - 1}
-	scol := Colors[color_idx]
-	rr := scol.r
-	gg := scol.g
-	bb := scol.b
-	col := C.SDL_MapRGB(g.sdl.screen.format, rr, gg, bb)
-	C.SDL_FillRect(g.sdl.screen, &rect, col)
+	col := Colors[color_idx]
+	sdl_fill_rect(g.sdl.screen, &rect, &col)
 }
 
 fn (g &Game) draw_field() {
@@ -678,73 +674,36 @@ fn (g &Game) draw_field() {
 	}
 }
 
-fn (g &Game) draw_text(x int, y int, text string, rr int, gg int, bb int) {
-	tcol := SdlColor {byte(3), byte(2), byte(1), byte(0)}
-	tsurf := C.TTF_RenderText_Solid(g.font, text.str, tcol)
+fn (g &Game) draw_text(x int, y int, text string, tcol vsdl2.SdlColor) {
+	_tcol := C.SDL_Color{tcol.r, tcol.g, tcol.b, tcol.a}
+	tsurf := C.TTF_RenderText_Solid(g.font, text.str, _tcol)
 	ttext := C.SDL_CreateTextureFromSurface(g.sdl.renderer, tsurf)
 	texw := 0
 	texh := 0
 	C.SDL_QueryTexture(ttext, 0, 0, &texw, &texh)
-	dstrect := SdlRect { x, y, texw, texh }
+	dstrect := vsdl2.SdlRect { x, y, texw, texh }
 	C.SDL_RenderCopy(g.sdl.renderer, ttext, 0, &dstrect)
 	C.SDL_DestroyTexture(ttext)
 	C.SDL_FreeSurface(tsurf)
 }
 
-fn (g &Game) draw_ptext(x int, y int, text string, rr int, gg int, bb int) {
-	g.draw_text(g.ofs_x + x, y, text, rr, gg, bb)
+[inline] fn (g &Game) draw_ptext(x int, y int, text string, tcol vsdl2.SdlColor) {
+	g.draw_text(g.ofs_x + x, y, text, tcol)
 }
 
-fn (g &Game) draw_score() {
-	if g.font != voidptr(0) {
-		g.draw_ptext(1, 2, 'score: ' + g.score.str() + ' nxt=' + g.tetro_next.str(), 0, 0, 0)
-		if g.state == .gameover {
-			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Over', 0, 0, 0)
-			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'FIRE to restart', 0, 0, 0)
-		} else if g.state == .paused {
-			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Paused', 0, 0, 0)
-			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'SPACE to resume', 0, 0, 0)
-		}
-	}
-}
-
-fn (g &Game) draw_stats() {
-	if g.font != voidptr(0) {
-		g.draw_text(WinWidth / 3 + 10, WinHeight * 3 / 4 + 0 * TextSize, 'stats: ' + g.tetro_total.str() + ' tetros', 0, 0, 0)
-		mut stats := ''
-		for st in g.tetro_stats {
-			mut s := 0
-			if g.tetro_total > 0 {
-				s = 100 * st / g.tetro_total
-			}
-			stats += ' '
-			stats += s.str()
-
-//	h := s * 20 / 100
-	h := 40
-//	rect := SdlRect {WinWidth / 3 + 10 + idx * 4, WinHeight * 3 / 4 - h, 4, h}
-	rect := SdlRect {10, 10, h, h}
-//	scol := Colors[idx]
-//	col := C.SDL_MapRGB(g.sdl.screen.format, scol.r, scol.g, scol.b)
-	col := C.SDL_MapRGB(g.sdl.screen.format, 255, 0, 0)
-	C.SDL_FillRect(g.sdl.screen, &rect, col)
-//	idx++
-
-		}
-		g.draw_text(WinWidth / 3 - 8, WinHeight * 3 / 4 + 2 * TextSize, stats, 0, 0, 0)
-	}
-}
-
+[live]
 fn (g &Game) draw_begin() {
-	mut rect := SdlRect {0,0,g.sdl.w,g.sdl.h}
-	mut col := C.SDL_MapRGB(g.sdl.screen.format, 255, 255, 255)
-	C.SDL_FillRect(g.sdl.screen, &rect, col)
+//	println('about to clear')
+	C.SDL_RenderClear(g.sdl.renderer)
+	mut rect := vsdl2.SdlRect {0,0,g.sdl.w,g.sdl.h}
+	col := vsdl2.SdlColor{byte(00), byte(00), byte(0), byte(0)}
+//	sdl_fill_rect(g.sdl.screen, &rect, BackgroundColor)
+	sdl_fill_rect(g.sdl.screen, &rect, col)
 
-	col = C.SDL_MapRGB(g.sdl.screen.format, 0, 0, 0)
-	rect = SdlRect {BlockSize * FieldWidth + 2,0,2,g.sdl.h}
-	C.SDL_FillRect(g.sdl.screen, &rect, col)
-	rect = SdlRect {WinWidth - BlockSize * FieldWidth - 4,0,2,g.sdl.h}
-	C.SDL_FillRect(g.sdl.screen, &rect, col)
+	rect = vsdl2.SdlRect {BlockSize * FieldWidth + 2,0,2,g.sdl.h}
+	sdl_fill_rect(g.sdl.screen, &rect, ForegroundColor)
+	rect = vsdl2.SdlRect {WinWidth - BlockSize * FieldWidth - 4,0,2,g.sdl.h}
+	sdl_fill_rect(g.sdl.screen, &rect, ForegroundColor)
 
 	mut idx := 0
 	for st in g.tetro_stats {
@@ -754,25 +713,44 @@ fn (g &Game) draw_begin() {
 		}
 		w := BlockSize
 		h := s * 4 * w / 100
-		rect = SdlRect {(WinWidth - 7 * (w + 1)) / 2 + idx * (w + 1), WinHeight * 3 / 4 - h, w, h}
-//		rect = SdlRect {10 + 5 * idx, 100 - h, 4, h}
-		scol := Colors[idx + 1]
-		col = C.SDL_MapRGB(g.sdl.screen.format, scol.r, scol.g, scol.b)
-//		col = C.SDL_MapRGB(g.sdl.screen.format, 255, 0, 0)
-		C.SDL_FillRect(g.sdl.screen, &rect, col)
+		rect = vsdl2.SdlRect {(WinWidth - 7 * (w + 1)) / 2 + idx * (w + 1), WinHeight * 3 / 4 - h, w, h}
+		sdl_fill_rect(g.sdl.screen, &rect, Colors[idx + 1])
 		idx++
 	}
 }
 
-fn (g &Game) draw_scene() {
-	g.draw_tetro()
-	g.draw_field()
-}
-
 fn (g &Game) draw_middle() {
 	C.SDL_UpdateTexture(g.sdl.texture, 0, g.sdl.screen.pixels, g.sdl.screen.pitch)
-	C.SDL_RenderClear(g.sdl.renderer)
 	C.SDL_RenderCopy(g.sdl.renderer, g.sdl.texture, 0, 0)
+}
+
+fn (g &Game) draw_score() {
+	if g.font != voidptr(0) {
+		g.draw_ptext(1, 2, 'score: ' + g.score.str() + ' nxt=' + g.tetro_next.str(), TextColor)
+		if g.state == .gameover {
+			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Over', TextColor)
+			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'FIRE to restart', TextColor)
+		} else if g.state == .paused {
+			g.draw_ptext(1, WinHeight / 2 + 0 * TextSize, 'Game Paused', TextColor)
+			g.draw_ptext(1, WinHeight / 2 + 2 * TextSize, 'SPACE to resume', TextColor)
+		}
+	}
+}
+
+fn (g &Game) draw_stats() {
+	if g.font != voidptr(0) {
+		g.draw_text(WinWidth / 3 + 10, WinHeight * 3 / 4 + 0 * TextSize, 'stats: ' + g.tetro_total.str() + ' tetros', TextColor)
+		mut stats := ''
+		for st in g.tetro_stats {
+			mut s := 0
+			if g.tetro_total > 0 {
+				s = 100 * st / g.tetro_total
+			}
+			stats += ' '
+			stats += s.str()
+		}
+		g.draw_text(WinWidth / 3 - 8, WinHeight * 3 / 4 + 2 * TextSize, stats, TextColor)
+	}
 }
 
 fn (g &Game) draw_end() {
