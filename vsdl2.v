@@ -150,6 +150,35 @@ pub fn fill_rect(screen &SdlSurface, rect &SdlRect, _col &SdlColor) {
 	C.SDL_FillRect(screen, rect, col)
 }
 
+//////////////////////////////////////////////////////////
+// SDL_Timer.h
+//////////////////////////////////////////////////////////
+fn C.SDL_GetTicks() u32
+fn C.SDL_TICKS_PASSED(a,b u32) bool
+fn C.SDL_GetPerformanceCounter() u64
+fn C.SDL_GetPerformanceFrequency() u64
+fn C.SDL_Delay(ms u32)
+
+pub fn get_ticks() u32 {
+        return C.SDL_GetTicks()
+}
+
+pub fn ticks_passed(a, b u32) bool {
+        return C.SDL_TICKS_PASSED(a,b)
+}
+
+pub fn get_perf_counter() u64 {
+        return C.SDL_GetPerformanceCounter()
+}
+
+pub fn get_perf_freq() u64 {
+        return C.SDL_GetPerformanceFrequency()
+}
+
+pub fn delay(ms u32) {
+        C.SDL_Delay(ms)
+}
+
 pub const (
   version = '0.2' // hack to avoid unused module warning in the main program
 )
