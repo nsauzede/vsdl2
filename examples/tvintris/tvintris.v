@@ -278,6 +278,9 @@ fn main() {
 	game2.joy_id = game.sdl.jids[1]
 //	println('JOY2 id=${game2.joy_id}')
 
+	// delay uses milliseconds so 1000 ms / 30 frames (30fps) roughly = 33.3333 ms/frame
+	time_per_frame := 1000.0 / 30.0 
+
 	game.k_fire = P1FIRE
 	game.k_up = P1UP
 	game.k_down = P1DOWN
@@ -311,8 +314,14 @@ fn main() {
 	go game2.run() // Run the game loop in a new thread
 
 	mut g := Game{}
-        mut should_close := false
+	mut should_close := false
+	mut total_frame_ticks := u64(0)
+	mut total_frames := u32(0)
+
 	for {
+		total_frames += 1
+		start_ticks := vsdl2.get_perf_counter()
+
 		g1 := game
 		g2 := game2
 		// here we determine which game contains most recent state
@@ -373,7 +382,14 @@ fn main() {
 		if should_close {
 			break
 		}
-		C.SDL_Delay(20)         // short delay between redraw
+		end_ticks := vsdl2.get_perf_counter()
+		
+		total_frame_ticks += end_ticks-start_ticks
+		elapsed_time := f64(end_ticks - start_ticks) / f64(vsdl2.get_perf_frequency())
+		// current_fps := 1.0 / elapsed_time
+		
+		// should limit system to (1 / time_per_frame) fps
+		vsdl2.delay(u32(math.floor(time_per_frame - elapsed_time)))  
 	}
 	if game.font != voidptr(0) {
 		C.TTF_CloseFont(game.font)
