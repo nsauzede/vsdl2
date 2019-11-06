@@ -171,7 +171,7 @@ pub fn get_perf_counter() u64 {
         return C.SDL_GetPerformanceCounter()
 }
 
-pub fn get_perf_freq() u64 {
+pub fn get_perf_frequency() u64 {
         return C.SDL_GetPerformanceFrequency()
 }
 
