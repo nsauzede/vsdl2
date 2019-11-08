@@ -224,11 +224,12 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	C.TTF_Init()
 	C.atexit(C.TTF_Quit)
 	bpp := 32
-	C.SDL_CreateWindowAndRenderer(w, h, 0, &sdl.window, &sdl.renderer)
+	vsdl2.create_window_and_renderer(w, h, 0, &sdl.window, &sdl.renderer)
+//	C.SDL_CreateWindowAndRenderer(w, h, 0, voidptr(&sdl.window), voidptr(&sdl.renderer))
 	C.SDL_SetWindowTitle(sdl.window, title.str)
 	sdl.w = w
 	sdl.h = h
-	sdl.screen = C.SDL_CreateRGBSurface(0, w, h, bpp, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000)
+	sdl.screen = vsdl2.create_rgb_surface(0, w, h, bpp, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000)
 	sdl.texture = C.SDL_CreateTexture(sdl.renderer, C.SDL_PIXELFORMAT_ARGB8888, C.SDL_TEXTUREACCESS_STREAMING, w, h)
 
 	C.Mix_Init(0)
@@ -247,7 +248,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	njoy := C.SDL_NumJoysticks()
 	for i := 0; i < njoy; i++ {
 		C.SDL_JoystickOpen(i)
-		jn := tos_clone(C.SDL_JoystickNameForIndex(i))
+		jn := tos_clone(vsdl2.joystick_name_for_index(i))
 		println('JOY NAME $jn')
 		for j := 0; j < NJOYMAX; j++ {
 			if sdl.jnames[j] == jn {
@@ -350,7 +351,7 @@ fn main() {
 
 //		game.handle_events()            // CRASHES if done in function ???
 		ev := vsdl2.SdlEvent{}
-		for 0 < C.SDL_PollEvent(&ev) {
+		for 0 < vsdl2.poll_event(&ev) {
 			match int(ev._type) {
 				C.SDL_QUIT { should_close = true }
 				C.SDL_KEYDOWN {
@@ -698,7 +699,8 @@ fn (g &Game) draw_text(x int, y int, text string, tcol vsdl2.SdlColor) {
 	texh := 0
 	C.SDL_QueryTexture(ttext, 0, 0, &texw, &texh)
 	dstrect := vsdl2.SdlRect { x, y, texw, texh }
-	C.SDL_RenderCopy(g.sdl.renderer, ttext, 0, &dstrect)
+//	vsdl2.render_copy(g.sdl.renderer, ttext, 0, &dstrect)
+	C.SDL_RenderCopy(g.sdl.renderer, ttext, voidptr(0), voidptr(&dstrect))
 	C.SDL_DestroyTexture(ttext)
 	C.SDL_FreeSurface(tsurf)
 }
@@ -737,7 +739,8 @@ fn (g &Game) draw_begin() {
 
 fn (g &Game) draw_middle() {
 	C.SDL_UpdateTexture(g.sdl.texture, 0, g.sdl.screen.pixels, g.sdl.screen.pitch)
-	C.SDL_RenderCopy(g.sdl.renderer, g.sdl.texture, 0, 0)
+//	vsdl2.render_copy(g.sdl.renderer, g.sdl.texture, voidptr(0), voidptr(0))
+	C.SDL_RenderCopy(g.sdl.renderer, g.sdl.texture, voidptr(0), voidptr(0))
 }
 
 fn (g &Game) draw_score() {
