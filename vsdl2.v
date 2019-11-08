@@ -140,14 +140,43 @@ mut:
 //////////////////////////////////////////////////////////
 
 fn C.SDL_MapRGB(fmt voidptr, r byte, g byte, b byte) u32
-fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) &SdlSurface
+fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) voidptr
 fn C.SDL_PollEvent(&SdlEvent) int
+fn C.SDL_NumJoysticks() int
+fn C.SDL_JoystickNameForIndex(device_index int) voidptr
+fn C.SDL_RenderCopy(renderer voidptr, texture voidptr, srcrect voidptr, dstrect voidptr) int
+fn C.SDL_CreateWindowAndRenderer(width int, height int, window_flags u32, window &voidptr, renderer &voidptr) int
 
 //////////////////////////////////////////////////////////
 
+pub fn create_window_and_renderer(width int, height int, window_flags u32, window voidptr, renderer voidptr) int {
+	return C.SDL_CreateWindowAndRenderer(width, height, window_flags, window, renderer)
+}
+
+pub fn joystick_name_for_index(device_index int) byteptr {
+	return byteptr(C.SDL_JoystickNameForIndex(device_index))
+}
+
 pub fn fill_rect(screen &SdlSurface, rect &SdlRect, _col &SdlColor) {
 	col := C.SDL_MapRGB(screen.format, _col.r, _col.g, _col.b)
-	C.SDL_FillRect(screen, rect, col)
+	_screen := voidptr(screen)
+	_rect := voidptr(rect)
+	C.SDL_FillRect(_screen, _rect, col)
+}
+
+pub fn create_rgb_surface(flags u32, width int, height int, depth int, rmask u32, gmask u32, bmask u32, amask u32) &SdlSurface {
+	res := C.SDL_CreateRGBSurface(flags, width, height, depth, rmask, gmask, bmask, amask)
+	return res
+}
+
+pub fn render_copy(renderer voidptr, texture voidptr, srcrect &SdlRect, dstrect &SdlRect) int {
+	_srcrect := voidptr(srcrect)
+	_dstrect := voidptr(dstrect)
+	return C.SDL_RenderCopy(renderer, texture, _srcrect, _dstrect)
+}
+
+pub fn poll_event(event &SdlEvent) int {
+	return C.SDL_PollEvent(voidptr(event))
 }
 
 //////////////////////////////////////////////////////////
