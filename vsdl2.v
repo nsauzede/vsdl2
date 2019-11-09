@@ -179,6 +179,14 @@ pub fn poll_event(event &SdlEvent) int {
 	return C.SDL_PollEvent(voidptr(event))
 }
 
+pub fn destroy_texture(text voidptr) {
+        C.SDL_DestroyTexture(text)
+}
+
+pub fn free_surface(surf &SdlSurface) {
+        C.SDL_FreeSurface(surf)
+}
+
 //////////////////////////////////////////////////////////
 // SDL_Timer.h
 //////////////////////////////////////////////////////////
