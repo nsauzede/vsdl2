@@ -94,7 +94,7 @@ pub:
 }
 struct JoyButtonEvent {
 pub:
-        _type u32                          /**< SDL_QUIT */
+        _type u32                          /**< SDL_JOYBUTTONDOWN or SDL_JOYBUTTONUP */
         timestamp u32
         which int                          /**< The joystick device index */
         button byte                        /**< The joystick button index */
