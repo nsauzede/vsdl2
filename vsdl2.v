@@ -163,8 +163,13 @@ fn C.SDL_JoystickNameForIndex(device_index int) voidptr
 fn C.SDL_RenderCopy(renderer voidptr, texture voidptr, srcrect voidptr, dstrect voidptr) int
 fn C.SDL_CreateWindowAndRenderer(width int, height int, window_flags u32, window &voidptr, renderer &voidptr) int
 //fn C.SDL_RWFromFile(byteptr, byteptr) &RwOps
-
+//fn C.SDL_CreateTextureFromSurface(renderer &C.SDL_Renderer, surface &C.SDL_Surface) &C.SDL_Texture
+fn C.SDL_CreateTextureFromSurface(renderer voidptr, surface voidptr) voidptr
 //////////////////////////////////////////////////////////
+
+pub fn create_texture_from_surface(renderer voidptr, surface &Surface) voidptr {
+	return C.SDL_CreateTextureFromSurface(renderer, voidptr(surface))
+}
 
 pub fn create_window_and_renderer(width int, height int, window_flags u32, window voidptr, renderer voidptr) int {
 	return C.SDL_CreateWindowAndRenderer(width, height, window_flags, window, renderer)
@@ -196,14 +201,13 @@ pub fn poll_event(event &Event) int {
 	return C.SDL_PollEvent(voidptr(event))
 }
 
-
-
 pub fn destroy_texture(text voidptr) {
         C.SDL_DestroyTexture(text)
 }
 
 pub fn free_surface(surf &Surface) {
-        C.SDL_FreeSurface(surf)
+	_surf := voidptr(surf)
+        C.SDL_FreeSurface(_surf)
 }
 
 //////////////////////////////////////////////////////////
@@ -238,4 +242,3 @@ pub fn delay(ms u32) {
 pub const (
   version = '0.2' // hack to avoid unused module warning in the main program
 )
-

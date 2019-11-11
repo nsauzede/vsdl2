@@ -13,8 +13,6 @@ import os
 import math
 import nsauzede.vsdl2
 import nsauzede.vsdl2.image as img
-//import vsdl2
-//import vsdl2.image as img
 [inline] fn sdl_fill_rect(s &vsdl2.Surface,r &vsdl2.Rect,c &vsdl2.Color){vsdl2.fill_rect(s,r,c)}
 
 const (
@@ -702,18 +700,19 @@ fn (g &Game) draw_field() {
 }
 
 fn (g &Game) draw_v_logo() {
-	v_logo := img.load(VLogo.str)
-	tv_logo := C.SDL_CreateTextureFromSurface(g.sdl.renderer, v_logo)
+	v_logo := img.load(VLogo)
+	tv_logo := vsdl2.create_texture_from_surface(g.sdl.renderer, v_logo)
 
 	texw := 0
 	texh := 0
 
 	C.SDL_QueryTexture(tv_logo, 0, 0, &texw, &texh)
-	
+
 	dstrect := vsdl2.Rect { (WinWidth / 2) - (texw / 2), 20, texw, texh }
-	
-	C.SDL_RenderCopy(g.sdl.renderer, tv_logo, 0, &dstrect)
-	
+
+	// Currently we can't seem to use vsdl2.render_copy when we need to pass a nil pointer (eg: srcrect to be NULL)
+//	vsdl2.render_copy(g.sdl.renderer, tv_logo, 0, &dstrect)
+	C.SDL_RenderCopy(g.sdl.renderer, tv_logo, voidptr(0), voidptr(&dstrect))
 	vsdl2.destroy_texture(tv_logo)
 	vsdl2.free_surface(v_logo)
 }
@@ -729,7 +728,7 @@ fn (g &Game) draw_text(x int, y int, text string, tcol vsdl2.Color) {
 //	vsdl2.render_copy(g.sdl.renderer, ttext, 0, &dstrect)
 	C.SDL_RenderCopy(g.sdl.renderer, ttext, voidptr(0), voidptr(&dstrect))
 	C.SDL_DestroyTexture(ttext)
-	C.SDL_FreeSurface(tsurf)
+	vsdl2.free_surface(tsurf)
 }
 
 [inline] fn (g &Game) draw_ptext(x int, y int, text string, tcol vsdl2.Color) {
