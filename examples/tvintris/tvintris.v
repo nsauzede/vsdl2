@@ -148,18 +148,21 @@ mut:
 struct SdlContext {
 pub:
 mut:
-//      VIDEO
+//	VIDEO
 	w		int
 	h		int
 	window          voidptr
 	renderer        voidptr
 	screen          &vsdl2.Surface
 	texture         voidptr
-//      AUDIO
-        actx		AudioContext
+//	AUDIO
+	actx		AudioContext
 //	JOYSTICKS
 	jnames		[2]string
 	jids		[2]int
+//	V logo
+	v_logo		&vsdl2.Surface
+	tv_logo		voidptr
 }
 
 struct Game {
@@ -239,6 +242,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	if C.Mix_OpenAudio(48000,C.MIX_DEFAULT_FORMAT,2,AudioBufSize) < 0 {
 		println('couldn\'t open audio')
 	}
+	println('opening music $MusicName')
 	sdl.actx.music = C.Mix_LoadMUS(MusicName.str)
 	sdl.actx.waves[0] = C.Mix_LoadWAV(SndBlockName.str)
 	sdl.actx.waves[1] = C.Mix_LoadWAV(SndLineName.str)
@@ -263,6 +267,13 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	imgres := img.img_init(flags)
 	if ((imgres & flags) != flags) {
 		println('error initializing image library.')
+	}
+	println('opening logo $VLogo')
+	sdl.v_logo = img.load(VLogo)
+	if !isnil(sdl.v_logo) {
+//		println('got v_logo=$sdl.v_logo')
+		sdl.tv_logo = vsdl2.create_texture_from_surface(sdl.renderer, sdl.v_logo)
+//		println('got tv_logo=$sdl.tv_logo')
 	}
 	C.SDL_JoystickEventState(C.SDL_ENABLE)
 }
@@ -415,6 +426,12 @@ fn main() {
 	}
 	if game.sdl.actx.waves[2] != voidptr(0) {
 		C.Mix_FreeChunk(game.sdl.actx.waves[2])
+	}
+	if !isnil(game.sdl.tv_logo) {
+		vsdl2.destroy_texture(game.sdl.tv_logo)
+	}
+	if !isnil(game.sdl.v_logo) {
+		vsdl2.free_surface(game.sdl.v_logo)
 	}
 }
 
@@ -700,21 +717,16 @@ fn (g &Game) draw_field() {
 }
 
 fn (g &Game) draw_v_logo() {
-	v_logo := img.load(VLogo)
-	tv_logo := vsdl2.create_texture_from_surface(g.sdl.renderer, v_logo)
-
+	if isnil(g.sdl.tv_logo) {
+		return
+	}
 	texw := 0
 	texh := 0
-
-	C.SDL_QueryTexture(tv_logo, 0, 0, &texw, &texh)
-
+	C.SDL_QueryTexture(g.sdl.tv_logo, 0, 0, &texw, &texh)
 	dstrect := vsdl2.Rect { (WinWidth / 2) - (texw / 2), 20, texw, texh }
-
 	// Currently we can't seem to use vsdl2.render_copy when we need to pass a nil pointer (eg: srcrect to be NULL)
 //	vsdl2.render_copy(g.sdl.renderer, tv_logo, 0, &dstrect)
-	C.SDL_RenderCopy(g.sdl.renderer, tv_logo, voidptr(0), voidptr(&dstrect))
-	vsdl2.destroy_texture(tv_logo)
-	vsdl2.free_surface(v_logo)
+	C.SDL_RenderCopy(g.sdl.renderer, g.sdl.tv_logo, voidptr(0), voidptr(&dstrect))
 }
 
 fn (g &Game) draw_text(x int, y int, text string, tcol vsdl2.Color) {
