@@ -9,9 +9,9 @@ Ubuntu :
 `$ sudo apt install libsdl2-image-dev`
 
 ClearLinux :
-`$ sudo swupd bundle-add devpkg-SDL_image`
+`$ sudo swupd bundle-add devpkg-SDL2_image`
 
 Windows/MSYS2 :
-`$ pacman -S mingw-w64-x86_64-SDL_image`
+`$ pacman -S mingw-w64-x86_64-SDL2_image`
 
 See the Tvintris example for usage
