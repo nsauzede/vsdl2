@@ -147,7 +147,7 @@ mut:
         waves [3]voidptr
 }
 
-struct Context {
+struct SdlContext {
 pub:
 mut:
 //      VIDEO
@@ -217,12 +217,12 @@ mut:
 	// Index of the rotation (0-3)
 	rotation_idx int
 	// SDL2 context for drawing
-	sdl             Context
+	sdl             SdlContext
 	// TTF context for font drawing
 	font            voidptr
 }
 
-fn (sdl mut Context) set_sdl_context(w int, h int, title string) {
+fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_AUDIO | C.SDL_INIT_JOYSTICK)
 	C.atexit(C.SDL_Quit)
 	C.TTF_Init()
