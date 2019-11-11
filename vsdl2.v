@@ -22,14 +22,14 @@ module vsdl2
 
 
 //struct C.SDL_Color{
-pub struct SdlColor{
+pub struct Color{
 pub:
-        r byte
-        g byte
-        b byte
-        a byte
+        r byte                              /**< Red value 0-255 */
+        g byte                              /**< Green value 0-255 */
+        b byte                              /**< Blue value 0-255 */
+        a byte                              /**< Alpha value 0-255 */
 }
-//type SdlColor C.SDL_Color
+//type Color C.SDL_Color
 
 pub struct C.SDL_Color{
 pub:
@@ -40,17 +40,17 @@ pub:
 }
 
 //struct C.SDL_Rect {
-pub struct SdlRect {
+pub struct Rect {
 pub:
-        x int
-        y int
-        w int
-        h int
+        x int                               /**< number of pixels from left side of screen */
+        y int                               /**< num of pixels from top of screen */
+        w int                               /**< width of rectangle */
+        h int                               /**< height of rectangle */
 }
-//type SdlRect C.SDL_Rect
+//type Rect C.SDL_Rect
 
 //pub struct C.SDL_Surface {
-pub struct SdlSurface {
+pub struct Surface {
 pub:
         flags u32
         format voidptr
@@ -61,91 +61,108 @@ pub:
         userdata voidptr
         locked int
         lock_data voidptr
-        clip_rect SdlRect
+        clip_rect Rect
         map voidptr
         refcount int
 }
-//type SdlSurface C.SDL_Surface
-//type SdlSurface SdlSurface
+//type Surface C.SDL_Surface
+//type Surface Surface
 
 /////////////////////////////////////////////////////////
 
-struct SdlQuitEvent {
-        _type u32
+struct QuitEvent {
+        _type u32                          /**< SDL_QUIT */
         timestamp u32
 }
-struct SdlKeysym {
+struct Keysym {
 pub:
-        scancode int
-        sym int
-        mod u16
-        unused u32
+        scancode int                       /**< hardware specific scancode */
+        sym int                            /**< SDL virtual keysym */
+        mod u16                            /**< current key modifiers */
+        unused u32                         /**< translated character */
 }
-struct SdlKeyboardEvent {
+struct KeyboardEvent {
 pub:
-        _type u32
+        _type u32                          /**< SDL_KEYDOWN or SDL_KEYUP */
         timestamp u32
         windowid u32
-        state byte
+        state byte                         /**< SDL_PRESSED or SDL_RELEASED */
         repeat byte
         padding2 byte
         padding3 byte
-        keysym SdlKeysym
+        keysym Keysym
 }
-struct SdlJoyButtonEvent {
+struct JoyButtonEvent {
 pub:
-        _type u32
+        _type u32                          /**< SDL_JOYBUTTONDOWN or SDL_JOYBUTTONUP */
         timestamp u32
-        which int
-        button byte
-        state byte
+        which int                          /**< The joystick device index */
+        button byte                        /**< The joystick button index */
+        state byte                         /**< SDL_PRESSED or SDL_RELEASED */
 }
-struct SdlJoyHatEvent {
+struct JoyHatEvent {
 pub:
-        _type u32
+        _type u32                          /**< SDL_JOYHATMOTION */
         timestamp u32
-        which int
-        hat byte
-        value byte
+        which int                          /**< The joystick device index */
+        hat byte                           /**< The joystick hat index */
+        value byte                         /**< The hat position value:
+			                   *   SDL_HAT_LEFTUP   SDL_HAT_UP       SDL_HAT_RIGHTUP
+			                   *   SDL_HAT_LEFT     SDL_HAT_CENTERED SDL_HAT_RIGHT
+			                   *   SDL_HAT_LEFTDOWN SDL_HAT_DOWN     SDL_HAT_RIGHTDOWN
+			                   *  Note that zero means the POV is centered.
+			                   */
 }
 
-//pub union SdlEventU {
-pub union SdlEvent {
+//pub union EventU {
+pub union Event {
 pub:
         _type u32
-        quit SdlQuitEvent
-        key SdlKeyboardEvent
-        jbutton SdlJoyButtonEvent
-        jhat SdlJoyHatEvent
+        quit QuitEvent
+        key KeyboardEvent
+        jbutton JoyButtonEvent
+        jhat JoyHatEvent
         _pad56 [56]byte
 }
-//type SdlEvent SdlEventU
+//type Event EventU
 
 
 //struct C.SDL_AudioSpec {
-pub struct SdlAudioSpec {
+pub struct AudioSpec {
 pub:
 mut:
-        freq int
-        format u16
-        channels byte
-        silence byte
-        samples u16
-        size u32
+        freq int                           /**< DSP frequency -- samples per second */
+        format u16                         /**< Audio data format */
+        channels byte                      /**< Number of channels: 1 mono, 2 stereo */
+        silence byte                       /**< Audio buffer silence value (calculated) */
+        samples u16                        /**< Audio buffer size in samples (power of 2) */
+        size u32                           /**< Necessary for some compile environments */
         callback voidptr
         userdata voidptr
 }
-//type SdlAudioSpec C.SDL_AudioSpec
 
-//////////////////////////////////////////////////////////
+// pub struct RwOps {
+// pub:
+// mut:
+//         seek voidptr
+//         read voidptr
+//         write voidptr
+//         close voidptr
+//         type_ u32
+//         hidden voidptr
+// }
+//type AudioSpec C.voidptrioSpec
 
-fn C.SDL_MapRGB(fmt voidptr, r byte, g byte, b byte) u32
+//////////////////////voidptr/////////////////////////////
+
+fn C.SDL_MapRGB(fmt voidptr byte, g byte, b byte) u32
 fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) voidptr
-fn C.SDL_PollEvent(&SdlEvent) int
+fn C.SDL_PollEvent(&Event) int
 fn C.SDL_NumJoysticks() int
 fn C.SDL_JoystickNameForIndex(device_index int) voidptr
 fn C.SDL_RenderCopy(renderer voidptr, texture voidptr, srcrect voidptr, dstrect voidptr) int
 fn C.SDL_CreateWindowAndRenderer(width int, height int, window_flags u32, window &voidptr, renderer &voidptr) int
+//fn C.SDL_RWFromFile(byteptr, byteptr) &RwOps
 
 //////////////////////////////////////////////////////////
 
@@ -157,26 +174,36 @@ pub fn joystick_name_for_index(device_index int) byteptr {
 	return byteptr(C.SDL_JoystickNameForIndex(device_index))
 }
 
-pub fn fill_rect(screen &SdlSurface, rect &SdlRect, _col &SdlColor) {
+pub fn fill_rect(screen &Surface, rect &Rect, _col &Color) {
 	col := C.SDL_MapRGB(screen.format, _col.r, _col.g, _col.b)
 	_screen := voidptr(screen)
 	_rect := voidptr(rect)
 	C.SDL_FillRect(_screen, _rect, col)
 }
 
-pub fn create_rgb_surface(flags u32, width int, height int, depth int, rmask u32, gmask u32, bmask u32, amask u32) &SdlSurface {
+pub fn create_rgb_surface(flags u32, width int, height int, depth int, rmask u32, gmask u32, bmask u32, amask u32) &Surface {
 	res := C.SDL_CreateRGBSurface(flags, width, height, depth, rmask, gmask, bmask, amask)
 	return res
 }
 
-pub fn render_copy(renderer voidptr, texture voidptr, srcrect &SdlRect, dstrect &SdlRect) int {
+pub fn render_copy(renderer voidptr, texture voidptr, srcrect &Rect, dstrect &Rect) int {
 	_srcrect := voidptr(srcrect)
 	_dstrect := voidptr(dstrect)
 	return C.SDL_RenderCopy(renderer, texture, _srcrect, _dstrect)
 }
 
-pub fn poll_event(event &SdlEvent) int {
+pub fn poll_event(event &Event) int {
 	return C.SDL_PollEvent(voidptr(event))
+}
+
+
+
+pub fn destroy_texture(text voidptr) {
+        C.SDL_DestroyTexture(text)
+}
+
+pub fn free_surface(surf &Surface) {
+        C.SDL_FreeSurface(surf)
 }
 
 //////////////////////////////////////////////////////////

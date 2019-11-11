@@ -3,6 +3,7 @@ SDL2 V module -- libSDL2 wrapper
 
 Current APIs available/tested in examples :
 - basic graphics (2D drawing)
+- [Image](image/README.md)
 - TTF font (text rendering)
 - input handling (keyboard/joystick events)
 - sounds (WAV mixing)
