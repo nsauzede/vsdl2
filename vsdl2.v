@@ -153,8 +153,10 @@ mut:
 // }
 //type AudioSpec C.voidptrioSpec
 
-//////////////////////voidptr/////////////////////////////
+type atexit_func_t fn ()
+fn C.atexit(atexit_func_t)
 
+///////////////////////////////////////////////////
 fn C.SDL_MapRGB(fmt voidptr byte, g byte, b byte) u32
 fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) voidptr
 fn C.SDL_PollEvent(&Event) int
@@ -165,7 +167,48 @@ fn C.SDL_CreateWindowAndRenderer(width int, height int, window_flags u32, window
 //fn C.SDL_RWFromFile(byteptr, byteptr) &RwOps
 //fn C.SDL_CreateTextureFromSurface(renderer &C.SDL_Renderer, surface &C.SDL_Surface) &C.SDL_Texture
 fn C.SDL_CreateTextureFromSurface(renderer voidptr, surface voidptr) voidptr
+fn C.SDL_CreateTexture(renderer voidptr, format u32, access int, w int, h int) voidptr
+fn C.SDL_FillRect(dst voidptr, dstrect voidptr, color u32) int
+fn C.SDL_RenderPresent(renderer voidptr)
+fn C.SDL_RenderClear(renderer voidptr) int
+fn C.SDL_UpdateTexture(texture voidptr, rect voidptr, pixels voidptr, pitch int) int
+fn C.SDL_QueryTexture(texture voidptr, format voidptr, access voidptr, w voidptr, h voidptr) int
+fn C.SDL_DestroyTexture(texture voidptr)
+fn C.SDL_FreeSurface(surface voidptr)
+fn C.SDL_Init(flags u32) int
+fn C.SDL_SetWindowTitle(window voidptr, title byteptr)
+// following is wrong : SDL_Zero is a macro accepting an argument
+fn C.SDL_zero()
+fn C.SDL_LoadWAV(file byteptr, spec voidptr, audio_buf voidptr, audio_len voidptr) voidptr
+fn C.SDL_FreeWAV(audio_buf voidptr)
+fn C.SDL_OpenAudio(desired voidptr, obtained voidptr) int
+fn C.SDL_CloseAudio()
+fn C.SDL_PauseAudio(pause_on int)
+
 //////////////////////////////////////////////////////////
+// SDL_Timer.h
+//////////////////////////////////////////////////////////
+fn C.SDL_GetTicks() u32
+fn C.SDL_TICKS_PASSED(a,b u32) bool
+fn C.SDL_GetPerformanceCounter() u64
+fn C.SDL_GetPerformanceFrequency() u64
+fn C.SDL_Delay(ms u32)
+
+//////////////////////////////////////////////////////////
+// TTF
+//////////////////////////////////////////////////////////
+fn C.TTF_Init() int
+fn C.TTF_Quit()
+fn C.TTF_OpenFont(file byteptr, ptsize int) voidptr
+fn C.TTF_CloseFont(font voidptr)
+//fn C.TTF_RenderText_Solid(voidptr, voidptr, SdlColor) voidptr
+fn C.TTF_RenderText_Solid(voidptr, voidptr, C.SDL_Color) voidptr
+//////////////////////////////////////////////////////////
+
+fn C.Mix_Init(flags int) int
+fn C.Mix_OpenAudio(frequency int, format u16, channels int, chunksize int) int
+fn C.Mix_LoadMUS(file byteptr) voidptr
+fn C.Mix_LoadWAV(file byteptr) voidptr
 
 pub fn create_texture_from_surface(renderer voidptr, surface &Surface) voidptr {
 	return C.SDL_CreateTextureFromSurface(renderer, voidptr(surface))
@@ -209,15 +252,6 @@ pub fn free_surface(surf &Surface) {
 	_surf := voidptr(surf)
         C.SDL_FreeSurface(_surf)
 }
-
-//////////////////////////////////////////////////////////
-// SDL_Timer.h
-//////////////////////////////////////////////////////////
-fn C.SDL_GetTicks() u32
-fn C.SDL_TICKS_PASSED(a,b u32) bool
-fn C.SDL_GetPerformanceCounter() u64
-fn C.SDL_GetPerformanceFrequency() u64
-fn C.SDL_Delay(ms u32)
 
 pub fn get_ticks() u32 {
         return C.SDL_GetTicks()
