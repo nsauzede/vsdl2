@@ -165,6 +165,9 @@ fn C.SDL_JoystickNameForIndex(device_index int) voidptr
 fn C.SDL_RenderCopy(renderer voidptr, texture voidptr, srcrect voidptr, dstrect voidptr) int
 fn C.SDL_CreateWindow(title byteptr, x int, y int, w int, h int, flags u32) voidptr
 fn C.SDL_CreateWindowAndRenderer(width int, height int, window_flags u32, window &voidptr, renderer &voidptr) int
+fn C.SDL_DestroyWindow(window voidptr)
+fn C.SDL_GetWindowSize(window voidptr, w voidptr, h voidptr)
+fn C.SDL_SetHint(name byteptr, value byteptr) C.SDL_bool
 //fn C.SDL_RWFromFile(byteptr, byteptr) &RwOps
 //fn C.SDL_CreateTextureFromSurface(renderer &C.SDL_Renderer, surface &C.SDL_Surface) &C.SDL_Texture
 fn C.SDL_CreateTextureFromSurface(renderer voidptr, surface voidptr) voidptr
@@ -177,6 +180,7 @@ fn C.SDL_QueryTexture(texture voidptr, format voidptr, access voidptr, w voidptr
 fn C.SDL_DestroyTexture(texture voidptr)
 fn C.SDL_FreeSurface(surface voidptr)
 fn C.SDL_Init(flags u32) int
+fn C.SDL_Quit()
 fn C.SDL_SetWindowTitle(window voidptr, title byteptr)
 // following is wrong : SDL_Zero is a macro accepting an argument
 fn C.SDL_zero()
@@ -232,6 +236,7 @@ fn C.SDL_GL_CreateContext(window voidptr) voidptr
 fn C.SDL_GL_MakeCurrent(window voidptr, context voidptr) int
 fn C.SDL_GL_SetSwapInterval(interval int) int
 fn C.SDL_GL_SwapWindow(window voidptr)
+fn C.SDL_GL_DeleteContext(context voidptr)
 
 pub fn create_texture_from_surface(renderer voidptr, surface &Surface) voidptr {
 	return C.SDL_CreateTextureFromSurface(renderer, voidptr(surface))
