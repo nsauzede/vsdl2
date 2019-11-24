@@ -184,6 +184,8 @@ fn C.SDL_FreeWAV(audio_buf voidptr)
 fn C.SDL_OpenAudio(desired voidptr, obtained voidptr) int
 fn C.SDL_CloseAudio()
 fn C.SDL_PauseAudio(pause_on int)
+fn C.SDL_JoystickOpen(device_index int) int
+fn C.SDL_JoystickEventState(state int) int
 
 //////////////////////////////////////////////////////////
 // SDL_Timer.h
@@ -205,10 +207,21 @@ fn C.TTF_CloseFont(font voidptr)
 fn C.TTF_RenderText_Solid(voidptr, voidptr, C.SDL_Color) voidptr
 //////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////
+// MIX
+//////////////////////////////////////////////////////////
 fn C.Mix_Init(flags int) int
 fn C.Mix_OpenAudio(frequency int, format u16, channels int, chunksize int) int
 fn C.Mix_LoadMUS(file byteptr) voidptr
 fn C.Mix_LoadWAV(file byteptr) voidptr
+fn C.Mix_PlayMusic(music voidptr, loops int) int
+fn C.Mix_VolumeMusic(volume int) int
+fn C.Mix_FreeMusic(music voidptr)
+fn C.Mix_CloseAudio()
+fn C.Mix_FreeChunk(chunk voidptr)
+fn C.Mix_PauseMusic()
+fn C.Mix_ResumeMusic()
+fn C.Mix_PlayChannel(channel int, chunk voidptr, loops int) int
 
 pub fn create_texture_from_surface(renderer voidptr, surface &Surface) voidptr {
 	return C.SDL_CreateTextureFromSurface(renderer, voidptr(surface))
