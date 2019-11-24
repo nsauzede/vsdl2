@@ -163,6 +163,7 @@ fn C.SDL_PollEvent(&Event) int
 fn C.SDL_NumJoysticks() int
 fn C.SDL_JoystickNameForIndex(device_index int) voidptr
 fn C.SDL_RenderCopy(renderer voidptr, texture voidptr, srcrect voidptr, dstrect voidptr) int
+fn C.SDL_CreateWindow(title byteptr, x int, y int, w int, h int, flags u32) voidptr
 fn C.SDL_CreateWindowAndRenderer(width int, height int, window_flags u32, window &voidptr, renderer &voidptr) int
 //fn C.SDL_RWFromFile(byteptr, byteptr) &RwOps
 //fn C.SDL_CreateTextureFromSurface(renderer &C.SDL_Renderer, surface &C.SDL_Surface) &C.SDL_Texture
@@ -222,6 +223,15 @@ fn C.Mix_FreeChunk(chunk voidptr)
 fn C.Mix_PauseMusic()
 fn C.Mix_ResumeMusic()
 fn C.Mix_PlayChannel(channel int, chunk voidptr, loops int) int
+
+//////////////////////////////////////////////////////////
+// GL
+//////////////////////////////////////////////////////////
+fn C.SDL_GL_SetAttribute(attr int, value int) int
+fn C.SDL_GL_CreateContext(window voidptr) voidptr
+fn C.SDL_GL_MakeCurrent(window voidptr, context voidptr) int
+fn C.SDL_GL_SetSwapInterval(interval int) int
+fn C.SDL_GL_SwapWindow(window voidptr)
 
 pub fn create_texture_from_surface(renderer voidptr, surface &Surface) voidptr {
 	return C.SDL_CreateTextureFromSurface(renderer, voidptr(surface))
