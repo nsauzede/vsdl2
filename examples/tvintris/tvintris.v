@@ -281,7 +281,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 
 fn main() {
 	println('tVintris -- tribute to venerable Twintris')
-	mut game := &Game{}
+	mut game := &Game{ font: 0 }
 	game.sdl.jnames[0] = JOYP1NAME
 	game.sdl.jnames[1] = JOYP2NAME
 	game.sdl.jids[0] = -1
@@ -289,7 +289,7 @@ fn main() {
 	game.sdl.set_sdl_context(WinWidth, WinHeight, Title)
 	game.font = C.TTF_OpenFont(FontName.str, TextSize)
 	seed := time.now().uni
-	mut game2 := &Game{}
+	mut game2 := &Game{ font: 0 }
 	game2.sdl = game.sdl
 	game2.font = game.font
 
@@ -333,7 +333,7 @@ fn main() {
 	game2.state = .running
 	go game2.run() // Run the game loop in a new thread
 
-	mut g := Game{}
+	mut g := Game{ font: 0 }
 	mut should_close := false
 	mut total_frame_ticks := u64(0)
 	mut total_frames := u32(0)
