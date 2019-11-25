@@ -17,12 +17,13 @@ import nsauzede.vsdl2.image as img
 
 const (
 	Title = 'tVintris'
-	FontName = 'RobotoMono-Regular.ttf'
-	MusicName = 'sounds/TwintrisThosenine.mod'
-	SndBlockName = 'sounds/block.wav'
-	SndLineName = 'sounds/single.wav'
-	SndDoubleName = 'sounds/triple.wav'
-	VLogo = 'images/v-logo_30_30.png'
+	BASE = os.dir( os.realpath( os.executable() ) )
+	FontName = BASE + '/RobotoMono-Regular.ttf'
+	MusicName = BASE + '/sounds/TwintrisThosenine.mod'
+	SndBlockName = BASE + '/sounds/block.wav'
+	SndLineName = BASE + '/sounds/single.wav'
+	SndDoubleName = BASE + '/sounds/triple.wav'
+	VLogo = BASE + '/images/v-logo_30_30.png'
 	BlockSize = 20 // pixels
 	FieldHeight = 20 // # of blocks
 	FieldWidth = 10
