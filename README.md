@@ -12,11 +12,20 @@ Current APIs available/tested in examples :
 
 Note : vsdl2 is supported on linux and windows/msys2/mingw64 only for now
 
+# Installation
+`v install nsauzede.vsdl2`
+
 # Examples
 
 [tVintris](https://github.com/nsauzede/vsdl2/tree/master/examples/tvintris)
 
 ![tVintris screenshot](https://github.com/nsauzede/vsdl2/blob/master/examples/tvintris/tvintris.png)
+
+You can run the example yourself with:
+```
+v install nsauzede.vsdl2
+v run ~/.vmodules/nsauzede/vsdl2/examples/tvintris/tvintris.v
+```
 
 # Dependencies
 
