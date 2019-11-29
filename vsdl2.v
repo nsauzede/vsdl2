@@ -4,17 +4,19 @@
 
 module vsdl2
 
-#flag linux `sdl2-config --cflags --libs`  -lSDL2_ttf -lSDL2_mixer
+#flag linux sdl2-config --cflags --libs  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+#flag darwin sdl2-config --cflags --libs  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+
 //#flag windows `sdl2-config --cflags`
-//#flag windows `sdl2-config --libs`  -lSDL2_ttf -lSDL2_mixer
-//#flag `sdl2-config --cflags --libs`  -lSDL2_ttf -lSDL2_mixer
+//#flag windows `sdl2-config --libs`  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+//#flag `sdl2-config --cflags --libs`  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 
 #flag -DSDL_DISABLE_IMMINTRIN_H
 
 // following kludge until `sdl2-config ...` is supported also on windows
 #flag windows -I/msys64/mingw64/include/SDL2
 #flag windows -Dmain=SDL_main
-#flag windows -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer
+#flag windows -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 
 #include <SDL.h>
 #include <SDL_ttf.h>
