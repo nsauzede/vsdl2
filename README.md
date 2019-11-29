@@ -10,7 +10,11 @@ Current APIs available/tested in examples :
 - music (MOD mixing)
 - more to come.. (networking ?)
 
-Note : vsdl2 is supported on linux and windows/msys2/mingw64 only for now
+# Support
+vsdl2 is supported on :
+- linux (major distros)
+- MacOS (brew)
+- windows (msys2/mingw64 only for now)
 
 # Installation
 `v install nsauzede.vsdl2`
@@ -29,14 +33,20 @@ v run ~/.vmodules/nsauzede/vsdl2/examples/tvintris/tvintris.v
 
 # Dependencies
 
+## Linux
 Fedora :
-`$ sudo dnf install SDL2-devel SDL2_ttf-devel SDL2_mixer-devel` 
+`$ sudo dnf install SDL2-devel SDL2_ttf-devel SDL2_mixer-devel SDL2_image-devel`
 
 Ubuntu :
-`$ sudo apt install libsdl2-ttf-dev libsdl2-mixer-dev`
+`$ sudo apt install libsdl2-ttf-dev libsdl2-mixer-dev libsdl2-image-dev`
 
 ClearLinux :
-`$ sudo swupd bundle-add devpkg-SDL2_ttf devpkg-SDL2_mixer`
+`$ sudo swupd bundle-add devpkg-SDL2_ttf devpkg-SDL2_mixer devpkg-SDL2_image`
 
+## MacOS
+Brew :
+`$ brew install sdl2 sdl2_gfx sdl2_ttf sdl2_mixer sdl2_image sdl2_net`
+
+## Windows
 Windows/MSYS2 :
-`$ pacman -S mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-SDL2_mixer`
+`$ pacman -S mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-SDL2_image`
