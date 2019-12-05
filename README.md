@@ -50,3 +50,7 @@ Brew :
 ## Windows
 Windows/MSYS2 :
 `$ pacman -S mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-SDL2_image`
+
+# Contributions
+
+Thanks to spytheman and adlesh for their contributions to vsdl2
