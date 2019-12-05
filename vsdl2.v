@@ -16,7 +16,8 @@ module vsdl2
 // following kludge until `sdl2-config ...` is supported also on windows
 #flag windows -I/msys64/mingw64/include/SDL2
 #flag windows -Dmain=SDL_main
-#flag windows -L/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+#flag windows -L/msys64/mingw64/lib
+#flag windows -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 
 #include <SDL.h>
 #include <SDL_ttf.h>

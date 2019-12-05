@@ -7,7 +7,7 @@ import nsauzede.vsdl2
 
 // following kludge until `sdl2-config ...` is supported also on windows
 #flag windows -I/msys64/mingw64/include/SDL2
-#flag windows -L/mingw64/lib -lSDL2_image
+#flag windows -L/msys64/mingw64/lib -lSDL2_image
 
 //////////////////////////////////////////////////////////
 // SDL_Image.h
