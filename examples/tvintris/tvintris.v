@@ -339,7 +339,7 @@ fn main() {
 	mut total_frames := u32(0)
 
 	for {
-		total_frames += 1
+		total_frames++
 		start_ticks := vsdl2.get_perf_counter()
 
 		g1 := game
@@ -398,6 +398,7 @@ fn main() {
 					game.handle_jhat(jh, jv, joyid)
 					game2.handle_jhat(jh, jv, joyid)
 				}
+				else {}
 			}
 		}
 		if should_close {
@@ -445,6 +446,7 @@ fn (game mut Game) handle_key(key int) {
 	match key {
 		C.SDLK_SPACE { action = .space }
 		game.k_fire { action = .fire }
+		else {}
 	}
 
 	if action == .space {
@@ -457,6 +459,7 @@ fn (game mut Game) handle_key(key int) {
 					C.Mix_ResumeMusic()
 					game.state = .running
 				}
+				else {}
 			}
 	}
 
@@ -466,6 +469,7 @@ fn (game mut Game) handle_key(key int) {
 					game.init_game()
 					game.state = .running
 				}
+				else {}
 			}
 	}
 	if game.state != .running { return }
@@ -475,6 +479,7 @@ fn (game mut Game) handle_key(key int) {
 		game.k_left { game.move_right(-1) }
 		game.k_right { game.move_right(1) }
 		game.k_down { game.move_tetro() } // drop faster when the player presses <down>
+		else {}
 	}
 }
 
@@ -486,6 +491,7 @@ fn (game mut Game) handle_jbutton(jb int, joyid int) {
 	mut action := Action(.idle)
 	match jb {
 		game.jb_fire { action = .fire }
+		else {}
 	}
 
 	if action == .fire {
@@ -494,6 +500,7 @@ fn (game mut Game) handle_jbutton(jb int, joyid int) {
 					game.init_game()
 					game.state = .running
 				}
+				else {}
 			}
 	}
 }
@@ -510,6 +517,7 @@ fn (game mut Game) handle_jhat(jh int, jv int, joyid int) {
 		game.jh_left { game.move_right(-1) }
 		game.jh_right { game.move_right(1) }
 		game.jh_down { game.move_tetro() } // drop faster when the player presses <down>
+		else {}
 	}
 }
 
@@ -668,7 +676,7 @@ fn (g mut Game) generate_tetro() {
 	g.pos_x = FieldWidth / 2 - TetroSize / 2
 	g.tetro_idx = g.rand_tetro()
 //	println('idx=${g.tetro_idx}')
-	g.tetro_stats[g.tetro_idx] += 1
+	g.tetro_stats[g.tetro_idx] += 2 -1
 	g.tetro_total++
 	g.rotation_idx = 0
 	g.get_tetro()
