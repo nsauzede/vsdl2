@@ -1,6 +1,11 @@
 # vsdl2
 SDL2 V module -- libSDL2 wrapper
 
+** IMPORTANT **
+vsdl2 has been integrated in V `vlib/sdl` [here](https://github.com/vlang/v/tree/master/vlib/sdl).
+Not sure what will become of this legacy SDL PoC..
+
+
 Current APIs available/tested in examples :
 - basic graphics (2D drawing)
 - [Image](image/README.md)
