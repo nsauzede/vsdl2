@@ -132,8 +132,7 @@ pub:
 
 //struct C.SDL_AudioSpec {
 pub struct AudioSpec {
-pub:
-mut:
+pub mut:
         freq int                           /**< DSP frequency -- samples per second */
         format u16                         /**< Audio data format */
         channels byte                      /**< Number of channels: 1 mono, 2 stereo */

@@ -147,8 +147,7 @@ mut:
 }
 
 struct SdlContext {
-pub:
-mut:
+pub mut:
 //	VIDEO
 	w		int
 	h		int
