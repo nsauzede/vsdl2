@@ -17,6 +17,7 @@ import nsauzede.vsdl2.image as img
 [inline] fn sdl_fill_rect(s &vsdl2.Surface,r &vsdl2.Rect,c &vsdl2.Color){vsdl2.fill_rect(s,r,c)}
 
 const (
+	vsdl2_version = vsdl2.version
 	Title = 'tVintris'
 	BASE = filepath.dir( os.realpath( os.executable() ) )
 	FontName = BASE + '/fonts/RobotoMono-Regular.ttf'
@@ -375,7 +376,7 @@ fn main() {
 			match int(ev._type) {
 				C.SDL_QUIT { should_close = true }
 				C.SDL_KEYDOWN {
-					key := int(ev.key.keysym.sym)
+					key := ev.key.keysym.sym
 					if key == C.SDLK_ESCAPE {
 					        should_close = true
 					        break
@@ -385,7 +386,7 @@ fn main() {
 				}
 				C.SDL_JOYBUTTONDOWN {
 					jb := int(ev.jbutton.button)
-					joyid := int(ev.jbutton.which)
+					joyid := ev.jbutton.which
 //					println('JOY BUTTON $jb $joyid')
 					game.handle_jbutton(jb, joyid)
 					game2.handle_jbutton(jb, joyid)
@@ -393,7 +394,7 @@ fn main() {
 				C.SDL_JOYHATMOTION {
 					jh := int(ev.jhat.hat)
 					jv := int(ev.jhat.value)
-					joyid := int(ev.jhat.which)
+					joyid := ev.jhat.which
 //					println('JOY HAT $jh $jv $joyid')
 					game.handle_jhat(jh, jv, joyid)
 					game2.handle_jhat(jh, jv, joyid)
@@ -831,7 +832,7 @@ fn parse_binary_tetro(t_ int) []Block {
 	for i := 0; i <= 3; i++ {
 		// Get ith digit of t
 		p := int(math.pow(10, 3 - i))
-		mut digit := int(t / p)
+		mut digit := t / p
 		t %= p
 		// Convert the digit to binary
 		for j := 3; j >= 0; j-- {

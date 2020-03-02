@@ -30,10 +30,14 @@ vsdl2 is supported on :
 
 ![tVintris screenshot](https://github.com/nsauzede/vsdl2/blob/master/examples/tvintris/tvintris.png)
 
-You can run the example yourself with:
+Once you have installed nsauzede.vsdl2 (see above), you can run the example yourself like this :
+On linux:
 ```
-v install nsauzede.vsdl2
 v run ~/.vmodules/nsauzede/vsdl2/examples/tvintris/tvintris.v
+```
+On Windows (MSYS2):
+```
+v run /c/Users/${USER}/.vmodules/nsauzede/vsdl2/examples/tvintris/tvintris.v
 ```
 
 # Dependencies
@@ -53,7 +57,7 @@ Brew :
 `$ brew install sdl2 sdl2_gfx sdl2_ttf sdl2_mixer sdl2_image sdl2_net`
 
 ## Windows
-Windows/MSYS2 :
+Windows (MSYS2) :
 `$ pacman -S mingw-w64-x86_64-SDL2_ttf mingw-w64-x86_64-SDL2_mixer mingw-w64-x86_64-SDL2_image`
 
 # Contributions

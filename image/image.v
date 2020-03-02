@@ -17,6 +17,10 @@ fn C.IMG_Init(flags int) int
 fn C.IMG_Quit()
 fn C.IMG_Load(file byteptr) voidptr
 
+const (
+	vsdl2_version = vsdl2.version
+)
+
 pub fn img_init(flags int) int {
 	return C.IMG_Init(flags)
 }
