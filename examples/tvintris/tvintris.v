@@ -7,7 +7,6 @@
 
 module main
 
-import filepath
 import rand
 import time
 import os
@@ -19,7 +18,7 @@ import nsauzede.vsdl2.image as img
 const (
 	vsdl2_version = vsdl2.version
 	Title = 'tVintris'
-	BASE = filepath.dir( os.realpath( os.executable() ) )
+	BASE = os.dir( os.real_path( os.executable() ) )
 	FontName = BASE + '/fonts/RobotoMono-Regular.ttf'
 	MusicName = BASE + '/sounds/TwintrisThosenine.mod'
 	SndBlockName = BASE + '/sounds/block.wav'
