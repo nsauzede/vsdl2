@@ -23,6 +23,8 @@ module vsdl2
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 
+[typedef]
+struct C.TTF_Font {}
 
 //struct C.SDL_Color{
 pub struct Color{
@@ -155,14 +157,13 @@ pub mut:
 // }
 //type AudioSpec C.voidptrioSpec
 
-type atexit_func_t fn ()
-fn C.atexit(atexit_func_t)
-
 ///////////////////////////////////////////////////
 fn C.SDL_MapRGB(fmt voidptr byte, g byte, b byte) u32
 fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) voidptr
 fn C.SDL_PollEvent(&Event) int
 fn C.SDL_NumJoysticks() int
+fn C.SDL_JoystickOpen(device_index int) int
+fn C.SDL_JoystickEventState(state int) int
 fn C.SDL_JoystickNameForIndex(device_index int) voidptr
 fn C.SDL_RenderCopy(renderer voidptr, texture voidptr, srcrect voidptr, dstrect voidptr) int
 fn C.SDL_CreateWindow(title byteptr, x int, y int, w int, h int, flags u32) voidptr
@@ -191,17 +192,6 @@ fn C.SDL_FreeWAV(audio_buf voidptr)
 fn C.SDL_OpenAudio(desired voidptr, obtained voidptr) int
 fn C.SDL_CloseAudio()
 fn C.SDL_PauseAudio(pause_on int)
-fn C.SDL_JoystickOpen(device_index int) int
-fn C.SDL_JoystickEventState(state int) int
-
-//////////////////////////////////////////////////////////
-// SDL_Timer.h
-//////////////////////////////////////////////////////////
-fn C.SDL_GetTicks() u32
-fn C.SDL_TICKS_PASSED(a,b u32) bool
-fn C.SDL_GetPerformanceCounter() u64
-fn C.SDL_GetPerformanceFrequency() u64
-fn C.SDL_Delay(ms u32)
 
 //////////////////////////////////////////////////////////
 // TTF
@@ -282,6 +272,15 @@ pub fn free_surface(surf &Surface) {
 	_surf := voidptr(surf)
         C.SDL_FreeSurface(_surf)
 }
+
+//////////////////////////////////////////////////////////
+// SDL_Timer.h
+//////////////////////////////////////////////////////////
+fn C.SDL_GetTicks() u32
+fn C.SDL_TICKS_PASSED(a,b u32) bool
+fn C.SDL_GetPerformanceCounter() u64
+fn C.SDL_GetPerformanceFrequency() u64
+fn C.SDL_Delay(ms u32)
 
 pub fn get_ticks() u32 {
         return C.SDL_GetTicks()

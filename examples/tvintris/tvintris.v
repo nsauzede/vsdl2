@@ -14,6 +14,8 @@ import math
 import nsauzede.vsdl2
 import nsauzede.vsdl2.image as img
 [inline] fn sdl_fill_rect(s &vsdl2.Surface,r &vsdl2.Rect,c &vsdl2.Color){vsdl2.fill_rect(s,r,c)}
+type atexit_func_t fn ()
+fn C.atexit(atexit_func_t)
 
 const (
 	vsdl2_version = vsdl2.version
@@ -831,7 +833,7 @@ fn parse_binary_tetro(t_ int) []Block {
 	for i := 0; i <= 3; i++ {
 		// Get ith digit of t
 		p := int(math.pow(10, 3 - i))
-		mut digit := t / p
+		mut digit := int(t / p)
 		t %= p
 		// Convert the digit to binary
 		for j := 3; j >= 0; j-- {
