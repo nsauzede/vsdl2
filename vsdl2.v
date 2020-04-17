@@ -158,7 +158,7 @@ pub mut:
 //type AudioSpec C.voidptrioSpec
 
 ///////////////////////////////////////////////////
-fn C.SDL_MapRGB(fmt voidptr byte, g byte, b byte) u32
+fn C.SDL_MapRGB(fmt voidptr, r byte, g byte, b byte) u32
 fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) voidptr
 fn C.SDL_PollEvent(&Event) int
 fn C.SDL_NumJoysticks() int
