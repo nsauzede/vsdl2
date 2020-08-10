@@ -374,7 +374,7 @@ fn main() {
 //		game.handle_events()            // CRASHES if done in function ???
 		ev := vsdl2.Event{}
 		for 0 < vsdl2.poll_event(&ev) {
-			match int(ev._type) {
+			match int(ev.@type) {
 				C.SDL_QUIT { should_close = true }
 				C.SDL_KEYDOWN {
 					key := ev.key.keysym.sym

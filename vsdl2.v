@@ -76,7 +76,7 @@ pub:
 /////////////////////////////////////////////////////////
 
 struct QuitEvent {
-        _type u32                          /**< SDL_QUIT */
+        @type u32                          /**< SDL_QUIT */
         timestamp u32
 }
 struct Keysym {
@@ -88,7 +88,7 @@ pub:
 }
 struct KeyboardEvent {
 pub:
-        _type u32                          /**< SDL_KEYDOWN or SDL_KEYUP */
+        @type u32                          /**< SDL_KEYDOWN or SDL_KEYUP */
         timestamp u32
         windowid u32
         state byte                         /**< SDL_PRESSED or SDL_RELEASED */
@@ -99,7 +99,7 @@ pub:
 }
 struct JoyButtonEvent {
 pub:
-        _type u32                          /**< SDL_JOYBUTTONDOWN or SDL_JOYBUTTONUP */
+        @type u32                          /**< SDL_JOYBUTTONDOWN or SDL_JOYBUTTONUP */
         timestamp u32
         which int                          /**< The joystick device index */
         button byte                        /**< The joystick button index */
@@ -107,7 +107,7 @@ pub:
 }
 struct JoyHatEvent {
 pub:
-        _type u32                          /**< SDL_JOYHATMOTION */
+        @type u32                          /**< SDL_JOYHATMOTION */
         timestamp u32
         which int                          /**< The joystick device index */
         hat byte                           /**< The joystick hat index */
@@ -127,7 +127,7 @@ pub:
         key KeyboardEvent
         jbutton JoyButtonEvent
         jhat JoyHatEvent
-        _pad56 [56]byte
+        pad56_ [56]byte
 }
 //type Event EventU
 
@@ -242,11 +242,11 @@ pub fn joystick_name_for_index(device_index int) byteptr {
 	return byteptr(C.SDL_JoystickNameForIndex(device_index))
 }
 
-pub fn fill_rect(screen &Surface, rect &Rect, _col &Color) {
-	col := C.SDL_MapRGB(screen.format, _col.r, _col.g, _col.b)
-	_screen := voidptr(screen)
-	_rect := voidptr(rect)
-	C.SDL_FillRect(_screen, _rect, col)
+pub fn fill_rect(screen &Surface, rect &Rect, col_ &Color) {
+	col := C.SDL_MapRGB(screen.format, col_.r, col_.g, col_.b)
+	screen_ := voidptr(screen)
+	rect_ := voidptr(rect)
+	C.SDL_FillRect(screen_, rect_, col)
 }
 
 pub fn create_rgb_surface(flags u32, width int, height int, depth int, rmask u32, gmask u32, bmask u32, amask u32) &Surface {
@@ -255,9 +255,9 @@ pub fn create_rgb_surface(flags u32, width int, height int, depth int, rmask u32
 }
 
 pub fn render_copy(renderer voidptr, texture voidptr, srcrect &Rect, dstrect &Rect) int {
-	_srcrect := voidptr(srcrect)
-	_dstrect := voidptr(dstrect)
-	return C.SDL_RenderCopy(renderer, texture, _srcrect, _dstrect)
+	srcrect_ := voidptr(srcrect)
+	dstrect_ := voidptr(dstrect)
+	return C.SDL_RenderCopy(renderer, texture, srcrect_, dstrect_)
 }
 
 pub fn poll_event(event &Event) int {
@@ -269,8 +269,8 @@ pub fn destroy_texture(text voidptr) {
 }
 
 pub fn free_surface(surf &Surface) {
-	_surf := voidptr(surf)
-        C.SDL_FreeSurface(_surf)
+	surf_ := voidptr(surf)
+        C.SDL_FreeSurface(surf_)
 }
 
 //////////////////////////////////////////////////////////
