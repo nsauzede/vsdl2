@@ -14,18 +14,18 @@ import math
 import nsauzede.vsdl2
 import nsauzede.vsdl2.image as img
 [inline] fn sdl_fill_rect(s &vsdl2.Surface,r &vsdl2.Rect,c &vsdl2.Color){vsdl2.fill_rect(s,r,c)}
-type atexit_func_t fn ()
-fn C.atexit(atexit_func_t)
+type Atexit_func_t fn ()
+fn C.atexit(Atexit_func_t)
 
 const (
 	vsdl2_version = vsdl2.version
 	Title = 'tVintris'
 	BASE = os.dir( os.real_path( os.executable() ) )
-	FontName = BASE + '/fonts/RobotoMono-Regular.ttf'
-	MusicName = BASE + '/sounds/TwintrisThosenine.mod'
-	SndBlockName = BASE + '/sounds/block.wav'
-	SndLineName = BASE + '/sounds/single.wav'
-	SndDoubleName = BASE + '/sounds/triple.wav'
+	font_name = BASE + '/fonts/RobotoMono-Regular.ttf'
+	music_name = BASE + '/sounds/TwintrisThosenine.mod'
+	snd_block_name = BASE + '/sounds/block.wav'
+	snd_line_name = BASE + '/sounds/single.wav'
+	snd_double_name = BASE + '/sounds/triple.wav'
 	VLogo = BASE + '/images/v-logo_30_30.png'
 	BlockSize = 20 // pixels
 	FieldHeight = 20 // # of blocks
@@ -73,7 +73,7 @@ const (
 
 const (
 	// Tetros' 4 possible states are encoded in binaries
-	BTetros = [
+	b_tetros = [
 		// 0000 0
 		// 0000 0
 		// 0110 6
@@ -225,6 +225,24 @@ mut:
 	// TTF context for font drawing
 	font            voidptr
 }
+/*
+fn C.rand() int
+pub fn seed(s int) {
+	C.srand(s)
+}
+pub fn next(max int) int {
+	return C.rand() % max
+}
+*/
+fn rand_r(seed &int) int {
+	unsafe{
+		mut rs := seed
+		ns := (*rs * 1103515245 + 12345)
+		*rs = ns
+		return ns & 0x7fffffff
+	}
+}
+
 
 fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_AUDIO | C.SDL_INIT_JOYSTICK)
@@ -245,11 +263,11 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	if C.Mix_OpenAudio(48000,C.MIX_DEFAULT_FORMAT,2,AudioBufSize) < 0 {
 		println('couldn\'t open audio')
 	}
-	println('opening music $MusicName')
-	sdl.actx.music = C.Mix_LoadMUS(MusicName.str)
-	sdl.actx.waves[0] = C.Mix_LoadWAV(SndBlockName.str)
-	sdl.actx.waves[1] = C.Mix_LoadWAV(SndLineName.str)
-	sdl.actx.waves[2] = C.Mix_LoadWAV(SndDoubleName.str)
+	println('opening music $music_name')
+	sdl.actx.music = C.Mix_LoadMUS(music_name.str)
+	sdl.actx.waves[0] = C.Mix_LoadWAV(snd_block_name.str)
+	sdl.actx.waves[1] = C.Mix_LoadWAV(snd_line_name.str)
+	sdl.actx.waves[2] = C.Mix_LoadWAV(snd_double_name.str)
 	sdl.actx.volume = C.SDL_MIX_MAXVOLUME
 	if C.Mix_PlayMusic(sdl.actx.music, 1) != -1 {
 		C.Mix_VolumeMusic(sdl.actx.volume)
@@ -268,7 +286,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	}
 	flags := C.IMG_INIT_PNG
 	imgres := img.img_init(flags)
-	if ((imgres & flags) != flags) {
+	if (imgres & flags) != flags {
 		println('error initializing image library.')
 	}
 	println('opening logo $VLogo')
@@ -289,7 +307,7 @@ fn main() {
 	game.sdl.jids[0] = -1
 	game.sdl.jids[1] = -1
 	game.sdl.set_sdl_context(WinWidth, WinHeight, Title)
-	game.font = C.TTF_OpenFont(FontName.str, TextSize)
+	game.font = C.TTF_OpenFont(font_name.str, TextSize)
 	seed := time.now().unix
 	mut game2 := &Game{ font: 0 }
 	game2.sdl = game.sdl
@@ -314,7 +332,7 @@ fn main() {
 	game.jh_left = JHP1LEFT
 	game.jh_right = JHP1RIGHT
 	game.ofs_x = 0
-	game.seed_ini = seed
+	game.seed_ini = int(seed)
 	game.init_game()
 	game.state = .running
 	go game.run() // Run the game loop in a new thread
@@ -330,7 +348,7 @@ fn main() {
 	game2.jh_left = JHP2LEFT
 	game2.jh_right = JHP2RIGHT
 	game2.ofs_x = WinWidth * 2 / 3
-	game2.seed_ini = seed
+	game2.seed_ini = int(seed)
 	game2.init_game()
 	game2.state = .running
 	go game2.run() // Run the game loop in a new thread
@@ -444,7 +462,7 @@ enum Action {
 }
 fn (game mut Game) handle_key(key int) {
 	// global keys
-	mut action := Action(.idle)
+	mut action := Action.idle
 	match key {
 		C.SDLK_SPACE { action = .space }
 		game.k_fire { action = .fire }
@@ -490,7 +508,7 @@ fn (game mut Game) handle_jbutton(jb int, joyid int) {
 		return
 	}
 	// global buttons
-	mut action := Action(.idle)
+	mut action := Action.idle
 	match jb {
 		game.jb_fire { action = .fire }
 		else {}
@@ -547,9 +565,9 @@ fn (g mut Game) init_game() {
 }
 
 fn (g mut Game) parse_tetros() {
-	for b_tetros in BTetros {
-		for b_tetro in b_tetros {
-			for t in parse_binary_tetro(b_tetro) {
+	for btetros in b_tetros {
+		for btetro in btetros {
+			for t in parse_binary_tetro(btetro) {
 				g.tetros_cache << t
 			}
 		}
@@ -667,8 +685,8 @@ fn (g &Game) delete_completed_line(y int) int {
 // Draw a rand tetro index
 fn (g mut Game) rand_tetro() int {
 	cur := g.tetro_next
-	g.tetro_next = rand.rand_r(&g.seed)
-	g.tetro_next = g.tetro_next % BTetros.len
+	g.tetro_next = rand_r(&g.seed)
+	g.tetro_next = g.tetro_next % b_tetros.len
 	return cur
 }
 
@@ -741,8 +759,8 @@ fn (g &Game) draw_v_logo() {
 }
 
 fn (g &Game) draw_text(x int, y int, text string, tcol vsdl2.Color) {
-	_tcol := C.SDL_Color{tcol.r, tcol.g, tcol.b, tcol.a}
-	tsurf := C.TTF_RenderText_Solid(g.font, text.str, _tcol)
+	tcol_ := C.SDL_Color{tcol.r, tcol.g, tcol.b, tcol.a}
+	tsurf := C.TTF_RenderText_Solid(g.font, text.str, tcol_)
 	ttext := C.SDL_CreateTextureFromSurface(g.sdl.renderer, tsurf)
 	texw := 0
 	texh := 0
