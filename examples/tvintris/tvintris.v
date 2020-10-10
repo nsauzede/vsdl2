@@ -14,8 +14,6 @@ import math
 import nsauzede.vsdl2
 import nsauzede.vsdl2.image as img
 [inline] fn sdl_fill_rect(s &vsdl2.Surface,r &vsdl2.Rect,c &vsdl2.Color){vsdl2.fill_rect(s,r,c)}
-type Atexit_func_t fn ()
-fn C.atexit(Atexit_func_t)
 
 const (
 	vsdl2_version = vsdl2.version
@@ -845,7 +843,7 @@ fn (g &Game) draw_end() {
 
 fn parse_binary_tetro(t_ int) []Block {
 	mut t := t_
-	res := [Block{}].repeat(4)
+	mut res := [Block{}].repeat(4)
 	mut cnt := 0
 	horizontal := t == 9// special case for the horizontal line
 	for i := 0; i <= 3; i++ {
@@ -858,11 +856,8 @@ fn parse_binary_tetro(t_ int) []Block {
 			bin := digit % 2
 			digit /= 2
 			if bin == 1 || (horizontal && i == TetroSize - 1) {
-				// TODO: res[cnt].x = j
-				// res[cnt].y = i
-				mut point := &res[cnt]
-				point.x = j
-				point.y = i
+				res[cnt].x = j
+				res[cnt].y = i
 				cnt++
 			}
 		}
