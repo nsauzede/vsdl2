@@ -281,7 +281,7 @@ pub fn free_surface(surf &Surface) {
 // SDL_Timer.h
 //////////////////////////////////////////////////////////
 fn C.SDL_GetTicks() u32
-fn C.SDL_TICKS_PASSED(a,b u32) bool
+fn C.SDL_TICKS_PASSED(a u32, b u32) bool
 fn C.SDL_GetPerformanceCounter() u64
 fn C.SDL_GetPerformanceFrequency() u64
 fn C.SDL_Delay(ms u32)
@@ -290,7 +290,7 @@ pub fn get_ticks() u32 {
         return C.SDL_GetTicks()
 }
 
-pub fn ticks_passed(a, b u32) bool {
+pub fn ticks_passed(a u32, b u32) bool {
         return C.SDL_TICKS_PASSED(a,b)
 }
 
