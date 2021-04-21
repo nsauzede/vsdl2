@@ -190,7 +190,7 @@ fn C.SDL_Init(flags u32) int
 fn C.SDL_Quit()
 fn C.SDL_SetWindowTitle(window voidptr, title byteptr)
 // following is wrong : SDL_Zero is a macro accepting an argument
-fn C.SDL_zero()
+fn C.SDL_zero(x)
 fn C.SDL_LoadWAV(file byteptr, spec voidptr, audio_buf voidptr, audio_len voidptr) voidptr
 fn C.SDL_FreeWAV(audio_buf voidptr)
 fn C.SDL_OpenAudio(desired voidptr, obtained voidptr) int
