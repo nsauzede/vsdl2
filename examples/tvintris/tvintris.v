@@ -257,7 +257,7 @@ fn (sdl mut SdlContext) set_sdl_context(w int, h int, title string) {
 	sdl.texture = C.SDL_CreateTexture(sdl.renderer, C.SDL_PIXELFORMAT_ARGB8888, C.SDL_TEXTUREACCESS_STREAMING, w, h)
 
 	C.Mix_Init(0)
-	C.atexit(C.Mix_Quit)
+	C.atexit(voidptr(C.Mix_Quit))
 	if C.Mix_OpenAudio(48000,C.MIX_DEFAULT_FORMAT,2,AudioBufSize) < 0 {
 		println('couldn\'t open audio')
 	}
