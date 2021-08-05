@@ -343,7 +343,7 @@ fn main() {
 	game2.k_up = p2up
 	game2.k_down = p2down
 	game2.k_left = p2left
-	game2.k_right = p2left
+	game2.k_right = p2right
 	//
 	game2.jb_fire = jbp2fire
 	game2.jh_up = jhp2up
