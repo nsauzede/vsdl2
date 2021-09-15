@@ -1,9 +1,12 @@
 # vsdl2
 SDL2 V module -- libSDL2 wrapper
 
-** IMPORTANT **
+*IMPORTANT
 vsdl2 has been integrated in V `vlib/sdl` [here](https://github.com/vlang/v/tree/master/vlib/sdl).
-Not sure what will become of this legacy SDL PoC..
+Not sure what will become of this legacy SDL PoC..*
+
+In fact, the `sdl` component of upstrean vlang seems to have moved [there](https://github.com/vlang/sdl) and be pretty much out of date.
+Thus, I'll continue maintaining my initial SDL2 work here, as time permits..
 
 
 Current APIs available/tested in examples :
