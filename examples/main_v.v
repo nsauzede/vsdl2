@@ -54,7 +54,7 @@ fn livemain() {
 	C.atexit(C.SDL_Quit)
 	C.TTF_Init()
 	C.atexit(C.TTF_Quit)
-	font := C.TTF_OpenFont('fonts/RobotoMono-Regular.ttf', 16)
+	font := C.TTF_OpenFont(c'fonts/RobotoMono-Regular.ttf', 16)
 	//        println('font=$font')
 	C.SDL_CreateWindowAndRenderer(w, h, 0, &sdl_window, &sdl_renderer)
 	//        println('renderer=$sdl_renderer')
@@ -64,10 +64,10 @@ fn livemain() {
 		w, h)
 	mut actx := AudioContext{}
 	//        C.SDL_zero(actx)
-	C.SDL_LoadWAV('sounds/door2.wav', &actx.wav_spec, &actx.wav_buffer, &actx.wav_length)
+	C.SDL_LoadWAV(c'sounds/door2.wav', &actx.wav_spec, &actx.wav_buffer, &actx.wav_length)
 	//        C.SDL_LoadWAV('sounds/block.wav', &actx.wav_spec, &actx.wav_buffer, &actx.wav_length)
 	//        println('got wav_buffer=${actx.wav_buffer}')
-	C.SDL_LoadWAV('sounds/single.wav', &actx.wav_spec, &actx.wav2_buffer, &actx.wav2_length)
+	C.SDL_LoadWAV(c'sounds/single.wav', &actx.wav_spec, &actx.wav2_buffer, &actx.wav2_length)
 	actx.wav_spec.callback = voidptr(acb)
 	actx.wav_spec.userdata = &actx
 	if C.SDL_OpenAudio(&actx.wav_spec, 0) < 0 {
@@ -154,7 +154,7 @@ fn livemain() {
 		//                tsurf := *voidptr(0xdeadbeef)
 		//                println('tsurf=$tsurf')
 		//                C.stubTTF_RenderText_Solid(font,'Hello SDL_ttf V !', &tcol, &tsurf)
-		tsurf := C.TTF_RenderText_Solid(font, 'Hello SDL_ttf V !', tcol)
+		tsurf := C.TTF_RenderText_Solid(font, c'Hello SDL_ttf V !', tcol)
 		//                println('tsurf=$tsurf')
 		//                tsurf := C.TTF_RenderText_Solid(font,'Hello SDL_ttf', 0)
 		//                println('tsurf=$tsurf')
