@@ -27,7 +27,7 @@ mut:
 }
 
 fn acb(userdata voidptr, stream &byte, _len int) {
-	mut ctx := &AudioContext(userdata)
+	mut ctx := unsafe { &AudioContext(userdata) }
 	//        println('acb!!! wav_buffer=${ctx.wav_buffer} audio_len=${ctx.audio_len}')
 	if ctx.audio_len == u32(0) {
 		unsafe { C.memset(stream, 0, _len) }
