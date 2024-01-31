@@ -27,20 +27,20 @@ mut:
 }
 
 fn acb(userdata voidptr, stream &byte, _len int) {
-	mut ctx := &AudioContext(userdata)
+unsafe{	mut ctx := &AudioContext(userdata)
 	//        println('acb!!! wav_buffer=${ctx.wav_buffer} audio_len=${ctx.audio_len}')
 	if ctx.audio_len == u32(0) {
-		unsafe { C.memset(stream, 0, _len) }
+		C.memset(stream, 0, _len)
 		return
 	}
 	mut len := u32(_len)
 	if len > ctx.audio_len {
 		len = ctx.audio_len
 	}
-	unsafe{C.memcpy(stream, ctx.audio_pos, len)}
+	C.memcpy(stream, ctx.audio_pos, len)
 	ctx.audio_pos = voidptr(u64(ctx.audio_pos) + u64(len))
 	ctx.audio_len -= len
-}
+}}
 
 [live]
 fn livemain() {
