@@ -13,7 +13,7 @@ import math
 import nsauzede.vsdl2
 import nsauzede.vsdl2.image as img
 
-[inline]
+@[inline]
 fn sdl_fill_rect(s &vsdl2.Surface, r &vsdl2.Rect, c &vsdl2.Color) {
 	vsdl2.fill_rect(s, r, c)
 }
@@ -159,7 +159,7 @@ pub mut:
 	h        int
 	window   voidptr
 	renderer voidptr
-	screen   &vsdl2.Surface
+	screen   &vsdl2.Surface = voidptr(0)
 	texture  voidptr
 	//	AUDIO
 	actx AudioContext
@@ -167,7 +167,7 @@ pub mut:
 	jnames [2]string
 	jids   [2]int
 	//	V logo
-	v_logo  &vsdl2.Surface
+	v_logo  &vsdl2.Surface = voidptr(0)
 	tv_logo voidptr
 }
 
@@ -784,7 +784,7 @@ fn (g &Game) draw_text(x int, y int, text string, tcol vsdl2.Color) {
 	vsdl2.free_surface(tsurf)
 }
 
-[inline]
+@[inline]
 fn (g &Game) draw_ptext(x int, y int, text string, tcol vsdl2.Color) {
 	g.draw_text(g.ofs_x + x, y, text, tcol)
 }
