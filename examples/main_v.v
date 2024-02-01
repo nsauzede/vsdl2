@@ -42,7 +42,7 @@ unsafe{	mut ctx := &AudioContext(userdata)
 	ctx.audio_len -= len
 }}
 
-[live]
+@[live]
 fn livemain() {
 	println('hello SDL 2 [v]\n')
 	w := 200

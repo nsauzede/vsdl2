@@ -27,7 +27,7 @@ module vsdl2
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 
-[typedef]
+@[typedef]
 struct C.TTF_Font {}
 
 //struct C.SDL_Color{
@@ -174,7 +174,7 @@ fn C.SDL_CreateWindow(title byteptr, x int, y int, w int, h int, flags u32) void
 fn C.SDL_CreateWindowAndRenderer(width int, height int, window_flags u32, window &voidptr, renderer &voidptr) int
 fn C.SDL_DestroyWindow(window voidptr)
 fn C.SDL_GetWindowSize(window voidptr, w voidptr, h voidptr)
-fn C.SDL_SetHint(name byteptr, value byteptr) C.SDL_bool
+fn C.SDL_SetHint(name byteptr, value byteptr) int // C.SDL_bool
 //fn C.SDL_RWFromFile(byteptr, byteptr) &RwOps
 //fn C.SDL_CreateTextureFromSurface(renderer &C.SDL_Renderer, surface &C.SDL_Surface) &C.SDL_Texture
 fn C.SDL_CreateTextureFromSurface(renderer voidptr, surface voidptr) voidptr

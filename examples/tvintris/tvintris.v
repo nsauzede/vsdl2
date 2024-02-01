@@ -789,7 +789,7 @@ fn (g &Game) draw_ptext(x int, y int, text string, tcol vsdl2.Color) {
 	g.draw_text(g.ofs_x + x, y, text, tcol)
 }
 
-[live]
+@[live]
 fn (g &Game) draw_begin() {
 	//	println('about to clear')
 	C.SDL_RenderClear(g.sdl.renderer)
