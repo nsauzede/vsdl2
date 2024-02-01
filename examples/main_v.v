@@ -9,24 +9,24 @@ import os
 
 const (
 	colors = [
-		vsdl2.Color{byte(255), byte(255), byte(255), byte(0)},
-		vsdl2.Color{byte(255), byte(0), byte(0), byte(0)},
+		vsdl2.Color{u8(255), u8(255), u8(255), u8(0)},
+		vsdl2.Color{u8(255), u8(0), u8(0), u8(0)},
 	]
 )
 
 struct AudioContext {
 mut:
-	//        audio_pos *byte
+	//        audio_pos *u8
 	audio_pos   voidptr
 	audio_len   u32
 	wav_spec    vsdl2.AudioSpec
-	wav_buffer  &byte = voidptr(0)
+	wav_buffer  &u8 = voidptr(0)
 	wav_length  u32
-	wav2_buffer &byte = voidptr(0)
+	wav2_buffer &u8 = voidptr(0)
 	wav2_length u32
 }
 
-fn acb(userdata voidptr, stream &byte, _len int) {
+fn acb(userdata voidptr, stream &u8, _len int) {
 unsafe{	mut ctx := &AudioContext(userdata)
 	//        println('acb!!! wav_buffer=${ctx.wav_buffer} audio_len=${ctx.audio_len}')
 	if ctx.audio_len == u32(0) {
@@ -108,7 +108,7 @@ fn livemain() {
 		}
 		//                rect := vsdl2.Rect {x: 0, y: 0, w: w, h: h }     // TODO doesn't compile ???
 		mut rect := vsdl2.Rect{0, 0, w, h}
-		mut col := vsdl2.Color{byte(255), byte(255), byte(255), byte(0)}
+		mut col := vsdl2.Color{u8(255), u8(255), u8(255), u8(0)}
 		vsdl2.fill_rect(screen, &rect, col)
 
 		rect = vsdl2.Rect{ballx, bally, balld, balld}
@@ -148,8 +148,8 @@ fn livemain() {
 		C.SDL_RenderCopy(sdl_renderer, sdl_texture, 0, 0)
 
 		//                tcol := C.SDL_Color {u32(0), u32(0), u32(0)}    // TODO doesn't compile ?
-		//                tcol := [byte(0), byte(0), byte(0), byte(0)]
-		tcol := C.SDL_Color{byte(3), byte(2), byte(1), byte(0)}
+		//                tcol := [u8(0), u8(0), u8(0), u8(0)]
+		tcol := C.SDL_Color{u8(3), u8(2), u8(1), u8(0)}
 		//                tsurf := C.TTF_RenderText_Solid(font,'Hello SDL_ttf', tcol)
 		//                tsurf := *voidptr(0xdeadbeef)
 		//                println('tsurf=$tsurf')

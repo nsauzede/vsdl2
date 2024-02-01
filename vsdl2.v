@@ -33,19 +33,19 @@ struct C.TTF_Font {}
 //struct C.SDL_Color{
 pub struct Color{
 pub:
-        r byte                              /**< Red value 0-255 */
-        g byte                              /**< Green value 0-255 */
-        b byte                              /**< Blue value 0-255 */
-        a byte                              /**< Alpha value 0-255 */
+        r u8                              /**< Red value 0-255 */
+        g u8                              /**< Green value 0-255 */
+        b u8                              /**< Blue value 0-255 */
+        a u8                              /**< Alpha value 0-255 */
 }
 //type Color C.SDL_Color
 
 pub struct C.SDL_Color{
 pub:
-        r byte
-        g byte
-        b byte
-        a byte
+        r u8
+        g u8
+        b u8
+        a u8
 }
 
 //struct C.SDL_Rect {
@@ -95,10 +95,10 @@ pub:
         @type u32                          /**< SDL_KEYDOWN or SDL_KEYUP */
         timestamp u32
         windowid u32
-        state byte                         /**< SDL_PRESSED or SDL_RELEASED */
-        repeat byte
-        padding2 byte
-        padding3 byte
+        state u8                         /**< SDL_PRESSED or SDL_RELEASED */
+        repeat u8
+        padding2 u8
+        padding3 u8
         keysym Keysym
 }
 struct JoyButtonEvent {
@@ -106,16 +106,16 @@ pub:
         @type u32                          /**< SDL_JOYBUTTONDOWN or SDL_JOYBUTTONUP */
         timestamp u32
         which int                          /**< The joystick device index */
-        button byte                        /**< The joystick button index */
-        state byte                         /**< SDL_PRESSED or SDL_RELEASED */
+        button u8                        /**< The joystick button index */
+        state u8                         /**< SDL_PRESSED or SDL_RELEASED */
 }
 struct JoyHatEvent {
 pub:
         @type u32                          /**< SDL_JOYHATMOTION */
         timestamp u32
         which int                          /**< The joystick device index */
-        hat byte                           /**< The joystick hat index */
-        value byte                         /**< The hat position value:
+        hat u8                           /**< The joystick hat index */
+        value u8                         /**< The hat position value:
 			                   *   SDL_HAT_LEFTUP   SDL_HAT_UP       SDL_HAT_RIGHTUP
 			                   *   SDL_HAT_LEFT     SDL_HAT_CENTERED SDL_HAT_RIGHT
 			                   *   SDL_HAT_LEFTDOWN SDL_HAT_DOWN     SDL_HAT_RIGHTDOWN
@@ -131,7 +131,7 @@ pub:
         key KeyboardEvent
         jbutton JoyButtonEvent
         jhat JoyHatEvent
-        pad56_ [56]byte
+        pad56_ [56]u8
 }
 //type Event EventU
 
@@ -141,8 +141,8 @@ pub struct AudioSpec {
 pub mut:
         freq int                           /**< DSP frequency -- samples per second */
         format u16                         /**< Audio data format */
-        channels byte                      /**< Number of channels: 1 mono, 2 stereo */
-        silence byte                       /**< Audio buffer silence value (calculated) */
+        channels u8                      /**< Number of channels: 1 mono, 2 stereo */
+        silence u8                       /**< Audio buffer silence value (calculated) */
         samples u16                        /**< Audio buffer size in samples (power of 2) */
         size u32                           /**< Necessary for some compile environments */
         callback voidptr
@@ -162,7 +162,7 @@ pub mut:
 //type AudioSpec C.voidptrioSpec
 
 ///////////////////////////////////////////////////
-fn C.SDL_MapRGB(fmt voidptr, r byte, g byte, b byte) u32
+fn C.SDL_MapRGB(fmt voidptr, r u8, g u8, b u8) u32
 fn C.SDL_CreateRGBSurface(flags u32, width int, height int, depth int, Rmask u32, Gmask u32, Bmask u32, Amask u32) voidptr
 fn C.SDL_PollEvent(&Event) int
 fn C.SDL_NumJoysticks() int

@@ -111,25 +111,25 @@ const (
 	]
 	// Each tetro has its unique color
 	colors           = [
-		vsdl2.Color{byte(0), byte(0), byte(0), byte(0)}, // unused ?
-		vsdl2.Color{byte(0), byte(0x62), byte(0xc0), byte(0)}, // quad : darkblue 0062c0
-		vsdl2.Color{byte(0xca), byte(0x7d), byte(0x5f), byte(0)}, // tricorn : lightbrown ca7d5f
-		vsdl2.Color{byte(0), byte(0xc1), byte(0xbf), byte(0)}, // short topright : lightblue 00c1bf
-		vsdl2.Color{byte(0), byte(0xc1), byte(0), byte(0)}, // short topleft : lightgreen 00c100
-		vsdl2.Color{byte(0xbf), byte(0xbe), byte(0), byte(0)}, // long topleft : yellowish bfbe00
-		vsdl2.Color{byte(0xd1), byte(0), byte(0xbf), byte(0)}, // long topright : pink d100bf
-		vsdl2.Color{byte(0xd1), byte(0), byte(0), byte(0)}, // longest : lightred d10000
-		vsdl2.Color{byte(0), byte(170), byte(170), byte(0)}, // unused ?
+		vsdl2.Color{u8(0), u8(0), u8(0), u8(0)}, // unused ?
+		vsdl2.Color{u8(0), u8(0x62), u8(0xc0), u8(0)}, // quad : darkblue 0062c0
+		vsdl2.Color{u8(0xca), u8(0x7d), u8(0x5f), u8(0)}, // tricorn : lightbrown ca7d5f
+		vsdl2.Color{u8(0), u8(0xc1), u8(0xbf), u8(0)}, // short topright : lightblue 00c1bf
+		vsdl2.Color{u8(0), u8(0xc1), u8(0), u8(0)}, // short topleft : lightgreen 00c100
+		vsdl2.Color{u8(0xbf), u8(0xbe), u8(0), u8(0)}, // long topleft : yellowish bfbe00
+		vsdl2.Color{u8(0xd1), u8(0), u8(0xbf), u8(0)}, // long topright : pink d100bf
+		vsdl2.Color{u8(0xd1), u8(0), u8(0), u8(0)}, // longest : lightred d10000
+		vsdl2.Color{u8(0), u8(170), u8(170), u8(0)}, // unused ?
 	]
 	// Background color
-	background_color = vsdl2.Color{byte(0), byte(0), byte(0), byte(0)}
-	//	background_color = vsdl2.Color{byte(255), byte(255), byte(255), byte(0)}
+	background_color = vsdl2.Color{u8(0), u8(0), u8(0), u8(0)}
+	//	background_color = vsdl2.Color{u8(255), u8(255), u8(255), u8(0)}
 	// Foreground color
-	foreground_color = vsdl2.Color{byte(0), byte(170), byte(170), byte(0)}
-	//	foreground_color = vsdl2.Color{byte(0), byte(0), byte(0), byte(0)}
+	foreground_color = vsdl2.Color{u8(0), u8(170), u8(170), u8(0)}
+	//	foreground_color = vsdl2.Color{u8(0), u8(0), u8(0), u8(0)}
 	// Text color
-	text_color       = vsdl2.Color{byte(0xca), byte(0x7d), byte(0x5f), byte(0)}
-		//	text_color = vsdl2.Color{byte(0), byte(0), byte(0), byte(0)}
+	text_color       = vsdl2.Color{u8(0xca), u8(0x7d), u8(0x5f), u8(0)}
+		//	text_color = vsdl2.Color{u8(0), u8(0), u8(0), u8(0)}
 )
 
 // TODO: type Tetro [tetro_size]struct{ x, y int }
@@ -794,7 +794,7 @@ fn (g &Game) draw_begin() {
 	//	println('about to clear')
 	C.SDL_RenderClear(g.sdl.renderer)
 	mut rect := vsdl2.Rect{0, 0, g.sdl.w, g.sdl.h}
-	col := vsdl2.Color{byte(0), byte(0), byte(0), byte(0)}
+	col := vsdl2.Color{u8(0), u8(0), u8(0), u8(0)}
 	//	sdl_fill_rect(g.sdl.screen, &rect, background_color)
 	sdl_fill_rect(g.sdl.screen, &rect, col)
 
