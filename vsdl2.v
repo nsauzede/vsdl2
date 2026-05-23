@@ -9,7 +9,8 @@ module vsdl2
 #flag linux -D_REENTRANT
 #flag linux -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 //#flag linux `sdl2-config --cflags --libs`  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
-#flag darwin `sdl2-config --cflags --libs`  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+#flag darwin -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image
+//#flag darwin `sdl2-config --cflags --libs`  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
 
 //#flag windows `sdl2-config --cflags`
 //#flag windows `sdl2-config --libs`  -lSDL2_ttf -lSDL2_mixer -lSDL2_image
